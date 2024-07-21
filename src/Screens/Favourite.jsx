@@ -61,12 +61,12 @@ const Favourite = () => {
           </div>
           <div className="flex flex-col gap-2">
             <img
-              src="https://atlas-content-cdn.pixelsquid.com/stock-images/perfume-bottle-dox7ee1-600.jpg"
-              width={200}
+              src="https://banner2.cleanpng.com/20231220/qjq/transparent-cartoon-perfume-pink-flowers-bottle-cork-stopper-elegant-perfume-bottle-with-pink-flower-1710957206668.webp"
+              width={120}
               className="rounded-2xl"
             />
             <p className="text-md ml-2 my-1">
-              1250<b> Br</b>
+              700<b> Br</b>
             </p>
           </div>
           
