@@ -13,6 +13,7 @@ import { FaPlusCircle } from "react-icons/fa";
 import Cart from "../Screens/Cart";
 import Add from "../Screens/Add";
 import ItemDetail from "../Screens/ItemDetail";
+import Profile from "../Screens/Profile";
 
 const BottomNavigation = () => {
   const [cart, setCart] = useState([]);
@@ -22,13 +23,13 @@ const BottomNavigation = () => {
       <div className="bg-[#F5F5F0]">
         <div className="flex-1">
           <Routes>
-            <Route path="/" element={<Shop cart={cart} setCart={setCart} />} />
+            <Route path="/" element={<Shop />} />
             <Route path="/add" element={<Add />} />
             <Route path="/item/:id" element={<ItemDetail />} />
-            <Route path="/cart" element={<Cart cart={cart} />} />
+            <Route path="/profile" element={<Profile cart={cart} />} />
           </Routes>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 bg-[#d43790] shadow-lg border-t border-gray-200 z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#0f172a] shadow-lg border-t border-gray-200 z-50">
           <div className="flex justify-around p-3">
             <NavLink to="/" end className="singleLink" activeClassName="active">
               <BiHome className="icon" size={20} />
@@ -39,7 +40,7 @@ const BottomNavigation = () => {
               <p>Post Ad</p>
             </NavLink>
             <NavLink
-              to="/account"
+              to="/profile"
               className="singleLink"
               activeClassName="active"
             >
