@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -6,47 +6,34 @@ import {
   NavLink,
 } from "react-router-dom";
 import "./components.css";
-import { CiWallet } from "react-icons/ci";
-
-import { FaCarTunnel, FaMoneyBill1Wave } from "react-icons/fa6";
-import { IoIosSwap } from "react-icons/io";
-import { IoCopyOutline } from "react-icons/io5";
 import { IoPersonSharp } from "react-icons/io5";
-import Favourite from "../Screens/Favourite";
+import Shop from "../Screens/Shop";
 import { BiCart, BiHeart, BiHome } from "react-icons/bi";
+import { FaPlusCircle } from "react-icons/fa";
+import Cart from "../Screens/Cart";
+import Add from "../Screens/Add";
+import ItemDetail from "../Screens/ItemDetail";
 
 const BottomNavigation = () => {
-  const Wallet = () => {
-    return <h1 className="text-white text-2xl">Hello</h1>;
-  };
+  const [cart, setCart] = useState([]);
+
   return (
     <Router>
       <div className="app bg-[#F5F5F0]">
         <Routes>
-          <Route path="/" element={<Favourite />} />
-          <Route path="/favourite" element={<Favourite />} />
-          <Route path="/favourite" element={<Wallet />} />
-          <Route path="/favourite" element={<Wallet />} />
-          <Route path="/favourite" element={<Wallet />} />
-          <Route path="/favourite" element={<Wallet />} />
-          <Route path="/favourite" element={<Wallet />} />
+          <Route path="/" element={<Shop cart={cart} setCart={setCart} />} />
+          <Route path="/add" element={<Add />} />
+          <Route path="/item/:id" element={<ItemDetail />} />
+          <Route path="/cart" element={<Cart cart={cart} />} />
         </Routes>
         <div className="links">
           <NavLink to="/" end className="singleLink" activeClassName="active">
             <BiHome className="icon" size={20} />
             <p>Home</p>
           </NavLink>
-          <NavLink
-            to="/favourite"
-            className="singleLink"
-            activeClassName="active"
-          >
-            <BiHeart className="icon" size={20} />
-            <p>Favourite</p>
-          </NavLink>
-          <NavLink to="/create" className="singleLink" activeClassName="active">
-            <BiCart className="icon" size={20} />
-            <p>Cart</p>
+          <NavLink to="/add" className="singleLink" activeClassName="active">
+            <FaPlusCircle className="icon" size={20} />
+            <p>Post Ad</p>
           </NavLink>
 
           <NavLink
