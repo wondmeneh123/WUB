@@ -18,7 +18,7 @@ const BottomNavigation = () => {
   const [cart, setCart] = useState([]);
 
   return (
-    <Router>
+    <Router className="fixed">
       <div className="app bg-[#F5F5F0]">
         <Routes>
           <Route path="/" element={<Shop cart={cart} setCart={setCart} />} />
