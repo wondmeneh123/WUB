@@ -122,30 +122,6 @@ const Add = () => {
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="category"
-            >
-              Product status
-            </label>
-            <select
-              id="category"
-              name="category"
-              value={item.productStatus}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="" disabled>
-                Select Status
-              </option>
-              <option value="Slightly used">Slightly used</option>
-              <option value="Used">Used</option>
-              <option value="New">New</option>
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="image"
             >
               Upload Image
