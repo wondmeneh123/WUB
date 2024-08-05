@@ -172,7 +172,7 @@ const Add = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className="bg-[#0f172a] text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-[#0f172a] mb-8 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={uploading}
             >
               {uploading ? "Uploading..." : "Add Item"}
