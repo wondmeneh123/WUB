@@ -14,6 +14,7 @@ import Cart from "../Screens/Cart";
 import Add from "../Screens/Add";
 import ItemDetail from "../Screens/ItemDetail";
 import Profile from "../Screens/Profile";
+import { Auth } from "../Screens/Auth";
 
 const BottomNavigation = () => {
   const [cart, setCart] = useState([]);
@@ -23,7 +24,8 @@ const BottomNavigation = () => {
       <div className="bg-[#F5F5F0]">
         <div className="flex-1">
           <Routes>
-            <Route path="/" element={<Shop />} />
+            <Route path="/" element={<Auth />} />
+            <Route path="/product" element={<Shop />} />
             <Route path="/add" element={<Add />} />
             <Route path="/item/:id" element={<ItemDetail />} />
             <Route path="/profile" element={<Profile cart={cart} />} />

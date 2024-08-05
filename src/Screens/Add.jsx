@@ -1,39 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
+import useProductForm from "../hooks/useProductForm";
 
 const Add = () => {
-  const [item, setItem] = useState({
-    name: "",
-    description: "",
-    price: "",
-    category: "",
-    address: "",
-    image: null,
-  });
-
-  const [preview, setPreview] = useState(null);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setItem((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setItem((prev) => ({
-      ...prev,
-      image: file,
-    }));
-    setPreview(URL.createObjectURL(file)); // Create a URL for preview
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission and image upload logic here
-    console.log(item);
-  };
+  const {
+    item,
+    preview,
+    uploading,
+    handleChange,
+    handleImageChange,
+    handleSubmit,
+  } = useProductForm();
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center">
@@ -96,21 +72,22 @@ const Add = () => {
               required
             />
           </div>
+
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="price"
+              htmlFor="address"
             >
               Address
             </label>
             <input
               type="text"
-              id="price"
-              name="price"
+              id="address"
+              name="address"
               value={item.address}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter item Address"
+              placeholder="Enter item address"
               required
             />
           </div>
@@ -134,11 +111,35 @@ const Add = () => {
                 Select category
               </option>
               <option value="Perfume">Perfume</option>
-              <option value="Lotiond">Lotiond</option>
+              <option value="Lotion">Lotion</option>
               <option value="Facial">Facial</option>
               <option value="Treatment">Treatment</option>
               <option value="Hair">Hair</option>
               <option value="Others">Others</option>
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="category"
+            >
+              Product status
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={item.productStatus}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="" disabled>
+                Select Status
+              </option>
+              <option value="Slightly used">Slightly used</option>
+              <option value="Used">Used</option>
+              <option value="New">New</option>
             </select>
           </div>
 
@@ -172,23 +173,9 @@ const Add = () => {
             <button
               type="submit"
               className="bg-[#0f172a] text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={uploading}
             >
-              Add Item
-            </button>
-            <button
-              type="button"
-              className="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              onClick={() =>
-                setItem({
-                  name: "",
-                  description: "",
-                  price: "",
-                  category: "",
-                  image: null,
-                })
-              }
-            >
-              Reset
+              {uploading ? "Uploading..." : "Add Item"}
             </button>
           </div>
         </form>
