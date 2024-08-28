@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../fb"; // Adjust the import path as necessary
-import { MdDiscount } from "react-icons/md";
-import { MdFace4 } from "react-icons/md";
+import { MdDiscount, MdFace4, MdAutoFixNormal } from "react-icons/md";
 import { TbPerfume } from "react-icons/tb";
-import { MdAutoFixNormal } from "react-icons/md";
 import { PiHairDryerThin } from "react-icons/pi";
 import { BiSearch } from "react-icons/bi";
 import { FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { BsThreeDots } from "react-icons/bs";
-// import Header from "../components/Header";
+import Heder from "../componenets/Header";
 
 const Shop = () => {
-  const [selectedItem, setSelectedItem] = useState(null);
   const [items, setItems] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null); // State for selected category
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,21 +38,42 @@ const Shop = () => {
     { name: "Others", icon: <BsThreeDots /> },
   ];
 
+  // Filter items based on selected category and search query
+  const filteredItems = items.filter((item) => {
+    const matchesCategory = selectedCategory
+      ? item.category === selectedCategory
+      : true;
+    const matchesSearch = searchQuery
+      ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      : true;
+    return matchesCategory && matchesSearch;
+  });
+
   const showItemDetail = (item) => {
     navigate(`/item/${item.id}`, { state: { item } });
   };
 
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category === selectedCategory ? null : category);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
   return (
     <div className="h-screen flex flex-col">
-      {/* <Header /> */}
+      <Heder />
       <div className="mt-1 overflow-y-auto flex-1">
-        <div className="flex items-center justify-between gap-3 px-5">
+        <div className="flex items-center justify-between gap-3 px-5 mt-6">
           <div className="flex bg-white items-center w-full p-2 rounded-2xl">
             <BiSearch size={20} />
             <input
               type="text"
-              className="ml-2 w-full"
+              className="ml-2 w-full focus:border-transparent focus:outline-none"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </div>
           <div className="p-3 rounded-full active:border-0 active:border-white">
@@ -71,7 +91,10 @@ const Shop = () => {
           {categories.map((cate) => (
             <div
               key={cate.name}
-              className="bg-white px-2 py-1 rounded-xl flex flex-col justify-center items-center cursor-pointer"
+              className={`bg-white px-2 py-1 rounded-xl flex flex-col justify-center items-center cursor-pointer ${
+                selectedCategory === cate.name ? "bg-gray-200" : ""
+              }`}
+              onClick={() => handleCategoryClick(cate.name)}
             >
               {cate.icon}
               {cate.name}
@@ -80,7 +103,7 @@ const Shop = () => {
         </div>
         <div className="flex flex-col overflow-y-scroll">
           <div className="px-4 text-xl font-semibold columns-2 gap-4">
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <div
                 key={item.id}
                 className="bg-white p-4 rounded-xl mb-4 cursor-pointer break-inside-avoid"
@@ -97,7 +120,6 @@ const Shop = () => {
                   <p className="text-sm text-gray-500 truncate">
                     {item.description}
                   </p>
-
                   <p className="text-lg font-semibold text-[#d43790]">
                     {item.price} Br
                   </p>
