@@ -7,15 +7,14 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { db } from "../fb";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { db, auth } from "../fb"; // Importing auth and db from ../fb
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [profilePhoto, setProfilePhoto] = useState("");
-  const firestore = getFirestore();
-  const auth = getAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch user data from localStorage
@@ -35,7 +34,7 @@ const Profile = () => {
       try {
         const q = query(
           collection(db, "products"),
-          where("userID", "==", user.userID) // Adjust as necessary
+          where("userID", "==", user?.userID) // Adjust as necessary
         );
         const querySnapshot = await getDocs(q);
         const fetchedItems = querySnapshot.docs.map((doc) => ({
@@ -43,21 +42,20 @@ const Profile = () => {
           ...doc.data(),
         }));
         setItems(fetchedItems);
-        console.log(items);
       } catch (error) {
         console.error("Error fetching items: ", error);
       }
     };
 
-    if (auth.currentUser) {
+    if (user) {
       fetchItems();
     }
-  }, [auth.currentUser, firestore]);
+  }, [user]);
 
   // Function to handle item detail display
   const showItemDetail = (item) => {
     // Implement item detail logic here
-    Navigate(`/item/${item.id}`, { state: { item } });
+    navigate(`/item/${item.id}`, { state: { item } });
   };
 
   if (!user) return <div>Loading...</div>; // Display loading if user data is not yet fetched
@@ -67,12 +65,12 @@ const Profile = () => {
       <div className="fixed top-0 left-0 right-0 flex justify-center items-center bg-white ">
         <h2 className="font-bold text-xl my-3 text-center">Profile</h2>
       </div>
-      <div className="flex mt-10 flex-col justify-center items-center">
+      <div className="flex mt-10 flex-col justify-center items-center pt-10">
         <img
           width={150}
-          height={200}
+          height={150}
           src={
-            profilePhoto ||
+            user.profilePhoto ||
             "https://img.freepik.com/premium-vector/portrait-avatar-male-laughter-joy-smile-calmness-diversity-personage_147933-10265.jpg?ga=GA1.1.1931341189.1721541823&semt=ais_hybrid"
           }
           alt="Profile"
@@ -88,11 +86,11 @@ const Profile = () => {
       <div className="mx-5">
         <h3 className="my-3">{user.name}'s Ads</h3>
         <div className="px-4 text-xl font-semibold flex flex-col">
-          <div className="columns-2 gap-4">
+          <div className="columns-2 gap-4 bg-white">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="bg-white p-4 rounded-xl mb-4 cursor-pointer break-inside-avoid"
+                className="bg-white shadow-lg  p-4 rounded-xl mb-4 cursor-pointer break-inside-avoid"
                 onClick={() => showItemDetail(item)}
               >
                 <img

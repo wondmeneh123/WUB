@@ -1,16 +1,23 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import BottomNavigation from "./componenets/BottomNavigation";
+import { Auth } from "./Screens/Auth";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const authData = localStorage.getItem("auth");
+    setIsAuthenticated(!!authData); // Set to true if authData exists
+  }, []);
 
   return (
-    <>
-      <BottomNavigation />
-    </>
+    <Router>
+      <div className="App">
+        {isAuthenticated ? <BottomNavigation /> : <Auth />}
+      </div>
+    </Router>
   );
 }
 

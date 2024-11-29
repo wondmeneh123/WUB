@@ -9,6 +9,7 @@ import { FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { BsThreeDots } from "react-icons/bs";
 import Heder from "../componenets/Header";
+import Carousel from "../componenets/Courasel";
 
 const Shop = () => {
   const [items, setItems] = useState([]);
@@ -35,7 +36,6 @@ const Shop = () => {
     { name: "Facial", icon: <MdFace4 /> },
     { name: "Treatment", icon: <MdAutoFixNormal /> },
     { name: "Hair", icon: <PiHairDryerThin /> },
-    { name: "Others", icon: <BsThreeDots /> },
   ];
 
   // Filter items based on selected category and search query
@@ -80,19 +80,15 @@ const Shop = () => {
             <FiFilter size={20} />
           </div>
         </div>
-        <div className="flex p-4 m-4 bg-[#d43790] justify-around rounded-2xl text-white items-center">
-          <div className="flex flex-col">
-            <p>Men's Fashion Collection</p>
-            <p>Discount up to 60%</p>
-          </div>
-          <MdDiscount size={50} color="#fff" />
+        <div className="px-4">
+          <Carousel />
         </div>
-        <div className="flex overflow-x-scroll gap-2 px-4 text-sm my-2 justify-center">
+        <div className="flex overflow-x-scroll gap-2 px-4 text-sm my-2 justify-around">
           {categories.map((cate) => (
             <div
               key={cate.name}
               className={`bg-white px-2 py-1 rounded-xl flex flex-col justify-center items-center cursor-pointer ${
-                selectedCategory === cate.name ? "bg-gray-200" : ""
+                selectedCategory === cate.name ? "bg-purple-500 text-white" : ""
               }`}
               onClick={() => handleCategoryClick(cate.name)}
             >
