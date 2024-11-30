@@ -98,7 +98,7 @@ const Shop = () => {
           ))}
         </div>
         <div className="flex flex-col overflow-y-scroll pb-5">
-          <div className="px-4 text-xl font-semibold columns-1 gap-4 mb-16">
+          <div className="px-4 text-xl font-semibold columns-2 gap-4 mb-16">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
@@ -106,13 +106,20 @@ const Shop = () => {
                 onClick={() => showItemDetail(item)}
               >
                 <img
-                  src={item.image}
                   width={200}
-                  alt={item.name}
-                  className="w-full rounded-2xl cursor-pointer"
+                  src={
+                    item.image
+                      ? item.image
+                      : "https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg"
+                  }
+                  height={200}
+                  alt={item.name || "Product"}
+                  className="w-full w rounded-2xl cursor-pointer"
                 />
                 <div className="mt-2">
-                  <p className="font-bold tracking-normal">{item.name}</p>
+                  <p className="font-bold tracking-normal truncate">
+                    {item.name}
+                  </p>
                   <p className="text-sm text-gray-500 truncate">
                     {item.description}
                   </p>

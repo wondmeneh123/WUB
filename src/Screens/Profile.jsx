@@ -100,9 +100,15 @@ const Profile = () => {
               onClick={() => showItemDetail(item)}
             >
               <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-40 object-cover"
+                height={100}
+                width={100}
+                src={
+                  item.image
+                    ? item.image
+                    : "https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg"
+                }
+                alt={item.name || "Product"}
+                className="w-full w rounded-2xl cursor-pointer"
               />
               <div className="p-4">
                 <p className="font-bold text-gray-800 truncate">{item.name}</p>
