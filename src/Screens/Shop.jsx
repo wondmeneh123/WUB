@@ -87,13 +87,15 @@ const Shop = () => {
           {categories.map((cate) => (
             <div
               key={cate.name}
-              className={`bg-white px-2 py-1 rounded-xl flex flex-col justify-center items-center cursor-pointer ${
-                selectedCategory === cate.name ? "bg-purple-500 text-white" : ""
+              className={`px-2 py-1 rounded-xl flex flex-col justify-center items-center cursor-pointer transition-all ${
+                selectedCategory === cate.name
+                  ? "bg-purple-500 text-white scale-105 shadow-lg"
+                  : "bg-white text-gray-700"
               }`}
               onClick={() => handleCategoryClick(cate.name)}
             >
-              {cate.icon}
-              {cate.name}
+              <div className="text-2xl">{cate.icon}</div>
+              <p>{cate.name}</p>
             </div>
           ))}
         </div>
