@@ -10,11 +10,11 @@ const Carousel = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Automatically slide to the next item
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-    }, 3000); // Slide every 3 seconds
+    }, 3000); 
 
     return () => clearInterval(timer); // Cleanup interval on component unmount
   }, [slides.length]);

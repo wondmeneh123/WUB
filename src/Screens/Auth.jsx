@@ -31,21 +31,40 @@ export const Auth = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
-        <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">
-          Sign In
+    <div className="flex items-center justify-center p-3 min-h-screen bg-gradient-to-r from-purple-600 via-pink-500 to-red-500">
+      <div className="bg-white p-10 rounded-lg shadow-lg max-w-md w-full text-center ">
+        {/* Header */}
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">
+          Welcome to WUBMart
         </h2>
-        <p className="text-center text-gray-600 mb-6">
-          Sign in with Google to continue
+        <p className="text-gray-600 mb-8">
+          Sign in with your Google account to explore exclusive deals and
+          offers!
         </p>
+
+        {/* Sign-In Button */}
         <button
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
+          className="w-full bg-pink-500 text-white py-3 rounded-lg shadow-md hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-75 transition duration-300 flex items-center justify-center"
           onClick={signInWithGoogle}
         >
-          Sign In With Google
+          Sign In with Google
         </button>
-        {error && <p className="mt-4 text-red-500 text-center">{error}</p>}
+
+        {/* Error Message */}
+        {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+
+        {/* Footer */}
+        <p className="mt-6 text-sm text-gray-500">
+          By signing in, you agree to our{" "}
+          <a href="/terms" className="text-blue-500 hover:underline">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a href="/privacy" className="text-blue-500 hover:underline">
+            Privacy Policy
+          </a>
+          .
+        </p>
       </div>
     </div>
   );

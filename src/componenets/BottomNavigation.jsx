@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Route, Routes, NavLink, useLocation } from "react-router-dom";
 import "./components.css";
 import { IoPersonSharp } from "react-icons/io5";
-import Shop from "../Screens/Shop";
 import { BiHome } from "react-icons/bi";
 import { FaPlusCircle } from "react-icons/fa";
+import Shop from "../Screens/Shop";
 import Profile from "../Screens/Profile";
 import Add from "../Screens/Add";
 import ItemDetail from "../Screens/ItemDetail";
@@ -15,7 +15,8 @@ const BottomNavigation = () => {
   const location = useLocation();
 
   return (
-    <div className="bg-[#F5F5F0]">
+    <div className="bg-[#FFF5F7]">
+      {/* Main Content */}
       <div className="flex-1">
         <Routes>
           <Route path="/" element={<App />} />
@@ -25,35 +26,42 @@ const BottomNavigation = () => {
           <Route path="/profile" element={<Profile cart={cart} />} />
         </Routes>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 bg-[#0f172a] shadow-lg border-t border-gray-200 z-50">
-        <div className="flex justify-around p-3">
+
+      {/* Bottom Navigation Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#FFEBEE] shadow-lg border-t border-pink-200 z-50">
+        <div className="flex justify-around p-4">
+          {/* Home Link */}
           <NavLink
             to="/shop"
             end
-            className={`singleLink ${
-              location.pathname === "/shop" ? "active" : ""
+            className={`flex flex-col items-center text-gray-500 ${
+              location.pathname === "/shop" ? "text-pink-600" : ""
             }`}
           >
-            <BiHome className="icon" size={20} />
-            <p>Home</p>
+            <BiHome size={24} />
+            <p className="text-xs mt-1">Home</p>
           </NavLink>
+
+          {/* Add Link */}
           <NavLink
             to="/add"
-            className={`singleLink ${
-              location.pathname === "/add" ? "active" : ""
+            className={`flex flex-col items-center text-gray-500 ${
+              location.pathname === "/add" ? "text-pink-600" : ""
             }`}
           >
-            <FaPlusCircle className="icon" size={20} />
-            <p>Post Ad</p>
+            <FaPlusCircle size={24} />
+            <p className="text-xs mt-1">Post Ad</p>
           </NavLink>
+
+          {/* Profile Link */}
           <NavLink
             to="/profile"
-            className={`singleLink ${
-              location.pathname === "/profile" ? "active" : ""
+            className={`flex flex-col items-center text-gray-500 ${
+              location.pathname === "/profile" ? "text-pink-600" : ""
             }`}
           >
-            <IoPersonSharp className="icon" size={20} />
-            <p>Account</p>
+            <IoPersonSharp size={24} />
+            <p className="text-xs mt-1">Account</p>
           </NavLink>
         </div>
       </div>

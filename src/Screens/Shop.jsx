@@ -65,7 +65,7 @@ const Shop = () => {
     <div className="h-screen flex flex-col">
       <Heder />
       <div className="mt-1 overflow-y-auto flex-1">
-        <div className="flex items-center justify-between gap-3 px-5 mt-6">
+        <div className="flex items-center justify-between gap-3 px-5 my-6">
           <div className="flex bg-white items-center w-full p-2 rounded-2xl">
             <BiSearch size={20} />
             <input
@@ -76,7 +76,7 @@ const Shop = () => {
               onChange={handleSearchChange}
             />
           </div>
-          <div className="p-3 rounded-full active:border-0 active:border-white">
+          <div className="p-3 rounded-full active:border-0 active:border-white bg-[#d43790] text-white">
             <FiFilter size={20} />
           </div>
         </div>
@@ -97,8 +97,8 @@ const Shop = () => {
             </div>
           ))}
         </div>
-        <div className="flex flex-col overflow-y-scroll">
-          <div className="px-4 text-xl font-semibold columns-2 gap-4">
+        <div className="flex flex-col overflow-y-scroll pb-5">
+          <div className="px-4 text-xl font-semibold columns-1 gap-4 mb-16">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
@@ -112,7 +112,7 @@ const Shop = () => {
                   className="w-full rounded-2xl cursor-pointer"
                 />
                 <div className="mt-2">
-                  <p className="font-bold">{item.name}</p>
+                  <p className="font-bold tracking-normal">{item.name}</p>
                   <p className="text-sm text-gray-500 truncate">
                     {item.description}
                   </p>
