@@ -73,10 +73,6 @@ const useProductForm = () => {
       // Create local URLs for preview
       const newPreviews = files.map((file) => URL.createObjectURL(file));
       setPreview(newPreviews);
-
-      // Clean up old object URLs when the component is destroyed or files change
-      // Note: Full cleanup needs a separate useEffect in a real app,
-      // but for simplicity, we manage the state directly here.
     }
   };
 
