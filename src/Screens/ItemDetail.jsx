@@ -1,12 +1,20 @@
 // src/Screens/ItemDetail.jsx
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoIosArrowBack } from "react-icons/io";
-import PropTypes from "prop-types"; // 1. PropTypes import
+import { useState } from "react"; // <-- useState import
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"; // <-- Arrow Icons
+import PropTypes from "prop-types";
 
 const ItemDetail = ({ addToCart }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { item } = location.state || {};
+
+  // State for Carousel: Tracks the currently displayed image index
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Check if item and images array exist
+  const images = item?.images || [];
+  const hasMultipleImages = images.length > 1;
 
   if (!item) {
     return (
@@ -23,6 +31,20 @@ const ItemDetail = ({ addToCart }) => {
       </div>
     );
   }
+
+  // --- Carousel Navigation Logic ---
+  const handleNext = () => {
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex + 1) % images.length // Loop back to 0 after the last image
+    );
+  };
+
+  const handlePrev = () => {
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length // Loop back to the last image after 0
+    );
+  };
+  // ----------------------------------
 
   const handleAddToCart = () => {
     if (addToCart) {
@@ -53,14 +75,46 @@ const ItemDetail = ({ addToCart }) => {
 
       {/* Main Content Area (Scrollable part) */}
       <div className="px-4 pb-20">
-        {/* Image Section - Centered and size controlled */}
-        <div className="flex justify-center my-4">
+        {/* Image Carousel Section - MODIFIED */}
+        <div className="flex justify-center my-4 relative">
+          {" "}
+          {/* relative is crucial for absolute positioning of buttons */}
+          {/* Main Image */}
           <img
-            src={item.image}
-            alt={item.name}
-            className="w-full max-w-xl mx-auto h-64 sm:h-80 object-cover rounded-lg shadow-md"
+            src={images[currentImageIndex] || "default-placeholder-url"} // <--- FIXED: Removed the inline JS comment
+            alt={`${item.name} Image ${currentImageIndex + 1}`}
+            className="w-full max-w-xl mx-auto h-64 sm:h-80 object-cover rounded-lg shadow-md transition-opacity duration-300"
           />
+          {/* Previous Button (Only visible if multiple images exist) */}
+          {hasMultipleImages && (
+            <button
+              onClick={handlePrev}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 text-white p-3 rounded-full hover:bg-opacity-50 transition-colors"
+              aria-label="Previous image"
+            >
+              <IoIosArrowBack size={20} />
+            </button>
+          )}
+          {/* Next Button (Only visible if multiple images exist) */}
+          {hasMultipleImages && (
+            <button
+              onClick={handleNext}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 text-white p-3 rounded-full hover:bg-opacity-50 transition-colors"
+              aria-label="Next image"
+            >
+              <IoIosArrowForward size={20} />
+            </button>
+          )}
         </div>
+
+        {/* Image Index Indicator (Optional) */}
+        {hasMultipleImages && (
+          <div className="flex justify-center mb-6">
+            <p className="text-sm text-gray-500">
+              {currentImageIndex + 1} / {images.length}
+            </p>
+          </div>
+        )}
 
         {/* Item Details - Content centered for larger screens */}
         <div className="max-w-xl mx-auto">
@@ -78,7 +132,7 @@ const ItemDetail = ({ addToCart }) => {
 
           <p className="text-gray-600 mb-6">Location: {item.address}</p>
 
-          {/* Vendor Information */}
+          {/* Vendor Information (Remains the same) */}
           {item.vendor && (
             <div className="mb-6 p-4 bg-pink-50 rounded-lg">
               <h3 className="text-lg font-semibold text-pink-700 mb-2">
@@ -90,7 +144,7 @@ const ItemDetail = ({ addToCart }) => {
             </div>
           )}
 
-          {/* Reviews Section */}
+          {/* Reviews Section (Remains the same) */}
           {item.reviews && item.reviews.length > 0 && (
             <div className="mt-6">
               <h3 className="text-xl font-bold text-gray-800 mb-4">
@@ -113,7 +167,7 @@ const ItemDetail = ({ addToCart }) => {
         </div>
       </div>
 
-      {/* Floating Action Button (Add to Cart/Call Vendor) */}
+      {/* Floating Action Button (Add to Cart/Call Vendor) (Remains the same) */}
       <div className="fixed bottom-20 left-0 right-0 p-4 z-40">
         <button
           onClick={handleAddToCart}
