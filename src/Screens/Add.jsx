@@ -125,13 +125,13 @@ const Add = () => {
             </select>
           </div>
 
-          {/* Upload Image */}
+          {/* Upload Images - UPDATED FOR MULTIPLE FILES */}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="image"
             >
-              Upload Image
+              Upload Images (Select up to 5)
             </label>
             <input
               type="file"
@@ -140,14 +140,21 @@ const Add = () => {
               accept="image/*"
               onChange={handleImageChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+              multiple /* <-- IMPORTANT: Allows multiple file selection */
             />
-            {preview && (
-              <div className="mt-4">
-                <img
-                  src={preview}
-                  alt="Image Preview"
-                  className="w-full h-64 object-cover rounded-lg"
-                />
+
+            {/* Image Preview - UPDATED TO MAP MULTIPLE PREVIEWS */}
+            {preview.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                {preview.map((imgSrc, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={imgSrc}
+                      alt={`Image Preview ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                  </div>
+                ))}
               </div>
             )}
           </div>
