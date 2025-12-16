@@ -14,7 +14,6 @@ import Header from "./Header";
 import Notification from "../Screens/Cart"; // Using Cart temporarily for Notifications route
 
 const BottomNavigation = () => {
-  // ESLint FIX: Removed 'setCart' as it is not used in this file, silencing the 'no-unused-vars' warning.
   const [cart] = useState([]);
   const location = useLocation();
 
