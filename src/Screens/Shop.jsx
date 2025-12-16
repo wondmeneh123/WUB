@@ -10,7 +10,6 @@ import { PiHairDryerThin } from "react-icons/pi";
 import { BiSearch } from "react-icons/bi";
 import { FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { BsThreeDots } from "react-icons/bs";
 
 // import Heder from "../componenets/Header";
 import Carousel from "../componenets/Courasel";
