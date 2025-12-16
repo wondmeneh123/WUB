@@ -5,63 +5,85 @@ import "./components.css";
 import { IoPersonSharp } from "react-icons/io5";
 import { BiHome } from "react-icons/bi";
 import { FaPlusCircle } from "react-icons/fa";
-import { MdOutlineShoppingCart } from "react-icons/md"; // Added Cart Icon
+import { MdOutlineShoppingCart } from "react-icons/md";
 // Import all necessary screen/page components
 import Shop from "../Screens/Shop";
 import Profile from "../Screens/Profile";
 import Add from "../Screens/Add";
 import ItemDetail from "../Screens/ItemDetail";
-import Cart from "../Screens/Cart";
+import Cart from "../Screens/Cart"; // Ensure this is imported
 import Header from "./Header";
 import Notification from "../Screens/Cart";
 
 const BottomNavigation = () => {
-  // 1. FIX: Cart State is now mutable
   const [cart, setCart] = useState([]);
   const location = useLocation();
 
-  // 2. Add to Cart Function
+  // 1. Add to Cart Function
   const addToCart = (itemToAdd) => {
     setCart((prevCart) => {
-      // Check if the item is already in the cart
       const existingItemIndex = prevCart.findIndex(
         (item) => item.id === itemToAdd.id
       );
 
       if (existingItemIndex > -1) {
-        // If it exists, increase the quantity
         const newCart = [...prevCart];
         newCart[existingItemIndex].quantity += 1;
         return newCart;
       } else {
-        // If it's new, add it with a quantity of 1
         return [...prevCart, { ...itemToAdd, quantity: 1 }];
       }
     });
-    // Optional: Provide feedback to the user
-    // alert(`${itemToAdd.name} has been added to the cart!`);
   };
 
-  // Calculate total number of items in the cart for the badge
+  // 2. Update Cart Quantity Function (New)
+  const updateCartQuantity = (itemId, change) => {
+    setCart((prevCart) => {
+      const newCart = prevCart.map((item) => {
+        if (item.id === itemId) {
+          // Ensure quantity is never less than 1
+          const newQuantity = Math.max(1, item.quantity + change);
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+      return newCart;
+    });
+  };
+
+  // 3. Remove From Cart Function (New)
+  const removeFromCart = (itemId) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+  };
+
   const totalCartItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div className="bg-[#FFF5F7]">
-      {/* Header is placed here, outside of Routes, to be static across all pages */}
       <Header />
 
-      {/* Main Content Area - Routes */}
       <div className="flex-1">
         <Routes>
           <Route path="/shop" element={<Shop />} />
           <Route path="/add" element={<Add />} />
-          {/* 3. FIX: Pass addToCart function to ItemDetail */}
           <Route
             path="/item/:id"
             element={<ItemDetail addToCart={addToCart} />}
           />
           <Route path="/profile" element={<Profile cart={cart} />} />
-          <Route path="/cart" element={<Cart cart={cart} />} />
+
+          {/* FIX: Pass new cart functions to Cart component */}
+          <Route
+            path="/cart"
+            element={
+              <Cart
+                cart={cart}
+                updateCartQuantity={updateCartQuantity}
+                removeFromCart={removeFromCart}
+              />
+            }
+          />
+
           <Route path="/notifications" element={<Notification cart={cart} />} />
           <Route path="/" element={<Shop />} />
         </Routes>
@@ -82,7 +104,7 @@ const BottomNavigation = () => {
             <p className="text-xs mt-1">Home</p>
           </NavLink>
 
-          {/* Cart Link (FIX: Added Cart Navlink with Badge) */}
+          {/* Cart Link with Badge */}
           <NavLink
             to="/cart"
             className={`flex flex-col items-center text-gray-500 relative ${
