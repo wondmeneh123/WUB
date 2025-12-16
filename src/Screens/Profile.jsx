@@ -1,5 +1,5 @@
 // src/Screens/Profile.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; // Removed 'React'
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { db } from "../fb";
@@ -13,8 +13,9 @@ const Profile = () => {
 
   // --- 1. Fetch User Data (Runs once) ---
   useEffect(() => {
+    // Fetch user data from localStorage
     const authData = localStorage.getItem("auth");
-    const photo = localStorage.getItem("profilePhoto"); // 'photo' is defined but never used, consider removing if not needed
+    // const photo = localStorage.getItem("profilePhoto"); // Removed 'photo' as it was unused.
 
     if (authData) {
       const parsedUser = JSON.parse(authData);
@@ -27,12 +28,11 @@ const Profile = () => {
   // --- 2. Fetch Items Data (Runs when authUserID changes) ---
   useEffect(() => {
     const fetchItems = async (userID) => {
-      if (!userID) return; // Now checking the passed userID
+      if (!userID) return;
 
       try {
         const q = query(
           collection(db, "products"),
-          // Use the cleaned userID variable
           where("userID", "==", userID)
         );
         const querySnapshot = await getDocs(q);
@@ -49,7 +49,7 @@ const Profile = () => {
     if (authUserID) {
       fetchItems(authUserID);
     }
-  }, [authUserID]); // Dependency on authUserID ensures fetchItems runs only after user is set
+  }, [authUserID]);
 
   // Function to handle item detail display
   const showItemDetail = (item) => {
@@ -63,7 +63,6 @@ const Profile = () => {
       </div>
     );
 
-  // ... (Rest of the JSX remains the same)
   return (
     <div className="bg-gray-50 min-h-screen pb-10">
       {/* Profile Header */}
@@ -90,10 +89,7 @@ const Profile = () => {
       {/* Profile Stats */}
       <div className="flex justify-around mx-5 py-4 mt-6 bg-pink-500 text-white rounded-xl shadow-md">
         <div className="text-center">
-          <h3 className="font-bold text-xl">
-            {/* Display actual number of ads */}
-            {items.length}
-          </h3>
+          <h3 className="font-bold text-xl">{items.length}</h3>
           <p className="text-sm">Ads Posted</p>
         </div>
         <div className="text-center">
@@ -106,8 +102,7 @@ const Profile = () => {
       {/* User's Ads */}
       <div className="mx-5 mt-6 mb-16">
         <h3 className="text-lg font-bold text-gray-800 mb-4">
-          {user.name}&apos;s Ads{" "}
-          {/* Used &apos; to fix potential ESLint warning */}
+          {user.name}&apos;s Ads
         </h3>
         <div className="grid grid-cols-2 gap-4 mb-15">
           {items.map((item) => (
