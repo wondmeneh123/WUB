@@ -5,22 +5,23 @@ import {
   MdAddCircleOutline,
   MdDeleteForever,
 } from "react-icons/md";
+import PropTypes from "prop-types";
 
 // Cart component receives the cart state and the setter functions as props
 const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
   const getTotal = () => {
-    // Correctly calculates total price (price * quantity) and formats to two decimal places
     return cart
       .reduce(
         (total, item) => total + parseFloat(item.price) * item.quantity,
         0
       )
       .toFixed(2);
-  }; // Display message if cart is empty
+  };
 
   if (cart.length === 0) {
     return (
       <div className="p-6 text-center h-full flex flex-col justify-center items-center">
+                {/* Removed unnecessary {" "} spaces */}
                {" "}
         <MdOutlineRemoveCircleOutline
           size={60}
@@ -78,13 +79,11 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
                   {(parseFloat(item.price) * item.quantity).toFixed(2)} Br      
                            {" "}
                 </p>
-                               {" "}
-                {/* Quantity Controls - FIX: onClick handlers UNCOMMENTED */}   
-                           {" "}
+                                {/* Quantity Controls */}               {" "}
                 <div className="flex items-center space-x-2">
                                     {/* Decrement Button */}                 {" "}
                   <button
-                    onClick={() => updateCartQuantity(item.id, -1)} // UNCOMMENTED
+                    onClick={() => updateCartQuantity(item.id, -1)}
                     className="text-red-500 disabled:text-gray-300"
                     disabled={item.quantity <= 1}
                     aria-label="Decrease quantity"
@@ -98,7 +97,7 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
                   </span>
                                     {/* Increment Button */}                 {" "}
                   <button
-                    onClick={() => updateCartQuantity(item.id, 1)} // UNCOMMENTED
+                    onClick={() => updateCartQuantity(item.id, 1)}
                     className="text-green-500"
                     aria-label="Increase quantity"
                   >
@@ -111,10 +110,9 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
               </div>
                          {" "}
             </div>
-                        {/* Remove Button - FIX: onClick handler UNCOMMENTED */}
-                       {" "}
+                        {/* Remove Button */}           {" "}
             <button
-              onClick={() => removeFromCart(item.id)} // UNCOMMENTED
+              onClick={() => removeFromCart(item.id)}
               className="text-gray-400 hover:text-red-600 transition-colors"
               aria-label={`Remove ${item.name} from cart`}
             >
@@ -147,6 +145,23 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
          {" "}
     </div>
   );
+};
+
+// 2. Define propTypes for Cart component
+Cart.propTypes = {
+  cart: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
+      quantity: PropTypes.number.isRequired,
+      image: PropTypes.string,
+      name: PropTypes.string,
+      category: PropTypes.string,
+    })
+  ).isRequired,
+  updateCartQuantity: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired,
 };
 
 export default Cart;
