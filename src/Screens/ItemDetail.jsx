@@ -1,9 +1,10 @@
 // src/Screens/ItemDetail.jsx
-//import React from "react";
+// FIX: React is not explicitly needed but often added by default. Removed the comment to keep it clean.
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 
-const ItemDetail = () => {
+// FIX: Accept addToCart function as a prop
+const ItemDetail = ({ addToCart }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { item } = location.state || {};
@@ -24,6 +25,19 @@ const ItemDetail = () => {
     );
   }
 
+  // New handler for the Add to Cart button
+  const handleAddToCart = () => {
+    if (addToCart) {
+      addToCart(item);
+    } else {
+      // Fallback if the function wasn't passed, though it should be.
+      console.error(
+        "addToCart function is missing! Check BottomNavigation routes."
+      );
+    }
+    // Optional: Add a subtle confirmation notification here (e.g., toast or modal)
+  };
+
   return (
     <div className="bg-white min-h-full">
       {/* Custom Header/Back Button Section */}
@@ -43,7 +57,7 @@ const ItemDetail = () => {
 
       {/* Main Content Area (Scrollable part) */}
       <div className="px-4 pb-20">
-        {/* Image Section - FIX: Centered and size controlled */}
+        {/* Image Section - Centered and size controlled */}
         <div className="flex justify-center my-4">
           <img
             src={item.image}
@@ -52,7 +66,7 @@ const ItemDetail = () => {
           />
         </div>
 
-        {/* Item Details - FIX: Content centered for larger screens */}
+        {/* Item Details - Content centered for larger screens */}
         <div className="max-w-xl mx-auto">
           <h2 className="text-3xl font-bold text-pink-600 mb-2">{item.name}</h2>
           <p className="text-gray-700 text-sm mb-4">{item.description}</p>
@@ -105,8 +119,10 @@ const ItemDetail = () => {
 
       {/* Floating Action Button (Add to Cart/Call Vendor) */}
       <div className="fixed bottom-20 left-0 right-0 p-4 z-40">
-        {/* FIX: Centered button for larger screens */}
-        <button className="w-full max-w-xl mx-auto block bg-[#d43790] text-white py-3 rounded-full shadow-lg hover:bg-pink-700 transition-colors font-bold text-lg">
+        <button
+          onClick={handleAddToCart} // FIX: Attached the handler
+          className="w-full max-w-xl mx-auto block bg-[#d43790] text-white py-3 rounded-full shadow-lg hover:bg-pink-700 transition-colors font-bold text-lg"
+        >
           Add to Cart
         </button>
       </div>
