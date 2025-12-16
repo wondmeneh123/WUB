@@ -1,15 +1,13 @@
 // src/Screens/ItemDetail.jsx
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoIosArrowBack } from "react-icons/io"; // Icon for Back button
+import { IoIosArrowBack } from "react-icons/io"; // Added Back Icon
 
 const ItemDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // Ensure item exists. Use optional chaining for state.
   const { item } = location.state || {};
 
-  // Handle case where item data is missing (e.g., direct access or refresh error)
   if (!item) {
     return (
       <div className="p-4 text-center">
@@ -27,11 +25,10 @@ const ItemDetail = () => {
   }
 
   return (
-    // FIX: Removed 'fixed inset-0' to allow it to scroll within the main app layout.
-    // The content is now standard page content.
+    // FIX 1: Removed 'fixed inset-0 flex justify-center items-center'
+    // This allows the page to scroll naturally within the main app layout.
     <div className="bg-white min-h-full">
       {/* Custom Header/Back Button Section */}
-      {/* The main app header is controlled by BottomNavigation, but this provides a Back button for the page */}
       <div className="flex items-center p-4 bg-white sticky top-0 z-10 shadow-sm">
         <button
           onClick={() => navigate(-1)}
@@ -46,10 +43,9 @@ const ItemDetail = () => {
         </h1>
       </div>
 
-      {/* Main Content Area */}
-      {/* pb-20 for padding above the bottom navigation bar */}
+      {/* Main Content Area (Scrollable part) */}
       <div className="px-4 pb-20">
-        {/* Image Section */}
+        {/* Image Section - Now behaves as regular content */}
         <img
           src={item.image}
           alt={item.name}
