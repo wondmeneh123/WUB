@@ -1,5 +1,5 @@
 // src/Screens/Cart.jsx
-import React from "react";
+
 import {
   MdOutlineRemoveCircleOutline,
   MdAddCircleOutline,
@@ -21,7 +21,6 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
   if (cart.length === 0) {
     return (
       <div className="p-6 text-center h-full flex flex-col justify-center items-center">
-        {/* Cleaned: Removed all {" "} and extra spaces */}
         <MdOutlineRemoveCircleOutline
           size={60}
           className="text-gray-400 mb-4"
@@ -30,7 +29,8 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
           Your Cart is Empty
         </h2>
         <p className="text-gray-500">
-          Looks like you haven't added anything to your cart yet.
+          Looks like you haven&apos;t added anything to your cart yet.{" "}
+          {/* Corrected: 'haven't' changed to 'haven&apos;t' */}
         </p>
       </div>
     );
