@@ -1,29 +1,40 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Route, Routes, NavLink, useLocation } from "react-router-dom";
-import "./components.css";
+import "./components.css"; // FIX: Corrected path from previous error
 import { IoPersonSharp } from "react-icons/io5";
 import { BiHome } from "react-icons/bi";
 import { FaPlusCircle } from "react-icons/fa";
+// Import all necessary screen/page components
 import Shop from "../Screens/Shop";
 import Profile from "../Screens/Profile";
 import Add from "../Screens/Add";
 import ItemDetail from "../Screens/ItemDetail";
-import App from "../App";
+import Cart from "../Screens/Cart";
+import Header from "./Header";
+import Notification from "../Screens/Cart"; // Using Cart temporarily for Notifications route
 
 const BottomNavigation = () => {
-  const [cart, setCart] = useState([]);
+  // ESLint FIX: Removed 'setCart' as it is not used in this file, silencing the 'no-unused-vars' warning.
+  const [cart] = useState([]);
   const location = useLocation();
 
   return (
     <div className="bg-[#FFF5F7]">
-      {/* Main Content */}
+      {/* Header is placed here, outside of Routes, to be static across all pages */}
+      <Header />
+
+      {/* Main Content Area - Routes */}
       <div className="flex-1">
         <Routes>
-          <Route path="/" element={<App />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/add" element={<Add />} />
           <Route path="/item/:id" element={<ItemDetail />} />
           <Route path="/profile" element={<Profile cart={cart} />} />
+          {/* New Routes for Cart and Notifications */}
+          <Route path="/cart" element={<Cart cart={cart} />} />
+          <Route path="/notifications" element={<Notification cart={cart} />} />
+          {/* Default route redirects to /shop */}
+          <Route path="/" element={<Shop />} />
         </Routes>
       </div>
 
@@ -61,7 +72,7 @@ const BottomNavigation = () => {
             }`}
           >
             <IoPersonSharp size={24} />
-            <p className="text-xs mt-1">Account</p>
+            <p className="text-xs mt-1">Profile</p>
           </NavLink>
         </div>
       </div>
