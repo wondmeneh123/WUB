@@ -1,9 +1,8 @@
 // src/Screens/ItemDetail.jsx
-// FIX: React is not explicitly needed but often added by default. Removed the comment to keep it clean.
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import PropTypes from "prop-types"; // 1. PropTypes import
 
-// FIX: Accept addToCart function as a prop
 const ItemDetail = ({ addToCart }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,17 +24,14 @@ const ItemDetail = ({ addToCart }) => {
     );
   }
 
-  // New handler for the Add to Cart button
   const handleAddToCart = () => {
     if (addToCart) {
       addToCart(item);
     } else {
-      // Fallback if the function wasn't passed, though it should be.
       console.error(
         "addToCart function is missing! Check BottomNavigation routes."
       );
     }
-    // Optional: Add a subtle confirmation notification here (e.g., toast or modal)
   };
 
   return (
@@ -120,7 +116,7 @@ const ItemDetail = ({ addToCart }) => {
       {/* Floating Action Button (Add to Cart/Call Vendor) */}
       <div className="fixed bottom-20 left-0 right-0 p-4 z-40">
         <button
-          onClick={handleAddToCart} // FIX: Attached the handler
+          onClick={handleAddToCart}
           className="w-full max-w-xl mx-auto block bg-[#d43790] text-white py-3 rounded-full shadow-lg hover:bg-pink-700 transition-colors font-bold text-lg"
         >
           Add to Cart
@@ -128,6 +124,11 @@ const ItemDetail = ({ addToCart }) => {
       </div>
     </div>
   );
+};
+
+// 2. propTypes definition
+ItemDetail.propTypes = {
+  addToCart: PropTypes.func.isRequired,
 };
 
 export default ItemDetail;
