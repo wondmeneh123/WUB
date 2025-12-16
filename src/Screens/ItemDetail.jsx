@@ -26,7 +26,7 @@ const ItemDetail = () => {
 
   return (
     // FIX 1: Removed 'fixed inset-0 flex justify-center items-center'
-    // This allows the page to scroll naturally within the main app layout.
+
     <div className="bg-white min-h-full">
       {/* Custom Header/Back Button Section */}
       <div className="flex items-center p-4 bg-white sticky top-0 z-10 shadow-sm">
