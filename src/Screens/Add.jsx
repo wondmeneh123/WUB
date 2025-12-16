@@ -57,13 +57,13 @@ const Add = () => {
             ></textarea>
           </div>
 
-          {/* Price */}
+          {/* Price - Corrected Label to (Br) */}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="price"
             >
-              Price ($)
+              Price (Br)
             </label>
             <input
               type="number"
