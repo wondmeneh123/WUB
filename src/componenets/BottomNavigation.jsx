@@ -13,8 +13,7 @@ import Add from "../Screens/Add";
 import ItemDetail from "../Screens/ItemDetail";
 import Cart from "../Screens/Cart"; // Ensure this is imported
 import Header from "./Header";
-import Notification from "../Screens/Cart";
-
+import Notifications from "../Screens/Notifications";
 const BottomNavigation = () => {
   const [cart, setCart] = useState([]);
   const location = useLocation();
@@ -84,7 +83,10 @@ const BottomNavigation = () => {
             }
           />
 
-          <Route path="/notifications" element={<Notification cart={cart} />} />
+          <Route
+            path="/notifications"
+            element={<Notifications cart={cart} />}
+          />
           <Route path="/" element={<Shop />} />
         </Routes>
       </div>
