@@ -6,6 +6,7 @@ import { storage } from "../fb";
 
 // Helper function to upload a single file to Firebase Storage
 const uploadFile = async (file) => {
+  // Creating a unique reference for each image using a timestamp
   const storageRef = ref(storage, `images/${Date.now()}_${file.name}`);
   const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -13,7 +14,7 @@ const uploadFile = async (file) => {
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        // Optional: Monitor progress if needed
+        // Track upload progress
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log("Upload is " + progress + "% done");
@@ -23,7 +24,7 @@ const uploadFile = async (file) => {
         reject(error);
       },
       async () => {
-        // Upload successful, get the download URL
+        // On successful upload, get the public download URL
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         resolve(downloadURL);
       }
@@ -35,21 +36,23 @@ const useProductForm = () => {
   const { addProduct } = useAddProduct();
   const { userID } = useGetUser();
 
-  // --- 1. State Change: 'images' is now an array of files/URLs
+  // Initialize state with basic info + cosmetic specific features
   const [item, setItem] = useState({
     name: "",
     description: "",
     price: "",
     category: "",
     address: "",
-    images: [], // <-- Changed from 'image' to 'images' (Array of files)
-    productStatus: "",
+    images: [], // Array to store file objects
+    skinType: "All", // Added: Cosmetic skin type
+    ingredients: "", // Added: Cosmetic ingredients
+    howToUse: "", // Added: Cosmetic usage instructions
   });
 
-  // 'preview' is now an array of URLs for local preview
-  const [preview, setPreview] = useState([]);
+  const [preview, setPreview] = useState([]); // Array for local image previews
   const [uploading, setUploading] = useState(false);
 
+  // Handle standard input changes (text, select, textarea)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setItem((prev) => ({
@@ -58,30 +61,28 @@ const useProductForm = () => {
     }));
   };
 
-  // --- 2. handleImageChange: Handle Multiple File Input
+  // Handle image selection (multiple files)
   const handleImageChange = (e) => {
     if (e.target.files) {
-      // Convert FileList to an array and limit to max 5 files
+      // Convert FileList to Array and limit to 5 images
       const files = Array.from(e.target.files).slice(0, 5);
 
-      // Update item state with the selected files
       setItem((prev) => ({
         ...prev,
         images: files,
       }));
 
-      // Create local URLs for preview
+      // Generate local blob URLs for instant UI preview
       const newPreviews = files.map((file) => URL.createObjectURL(file));
       setPreview(newPreviews);
     }
   };
 
-  // --- 3. handleSubmit: Upload Multiple Images
+  // Final submission logic
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUploading(true);
 
-    // Check if there are any files to upload
     if (item.images.length === 0) {
       alert("Please select at least one image.");
       setUploading(false);
@@ -89,23 +90,25 @@ const useProductForm = () => {
     }
 
     try {
-      // Upload all files and collect their download URLs
+      // 1. Upload all selected images in parallel or sequence
       const imageUrls = [];
       for (const file of item.images) {
-        const url = await uploadFile(file); // Use the helper function
+        const url = await uploadFile(file);
         imageUrls.push(url);
       }
 
+      // 2. Build the final object to be saved in Firestore
       const newItem = {
         ...item,
         price: parseFloat(item.price),
-        images: imageUrls, // <-- Save the array of public URLs
+        images: imageUrls, // Replace file objects with download URLs
         userID,
       };
 
+      // 3. Save to Firestore using the addProduct hook
       await addProduct(newItem);
 
-      // Reset form states
+      // 4. Reset form state to initial values
       setItem({
         name: "",
         description: "",
@@ -113,15 +116,16 @@ const useProductForm = () => {
         category: "",
         address: "",
         images: [],
-        productStatus: "",
+        skinType: "All",
+        ingredients: "",
+        howToUse: "",
       });
-      setPreview([]); // Reset preview array
+      setPreview([]);
 
-      // Optional: Success notification here
       alert("Product added successfully!");
     } catch (error) {
       console.error("Error adding item or uploading images: ", error);
-      alert("Failed to add product. Check console for details.");
+      alert("Failed to add product.");
     } finally {
       setUploading(false);
     }

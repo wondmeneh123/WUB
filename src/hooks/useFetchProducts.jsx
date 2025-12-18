@@ -7,15 +7,21 @@ import { storage } from "../fb";
 const useProductForm = () => {
   const { addProduct } = useAddProduct();
   const { userID } = useGetUser();
+
+  // 1. ሁሉንም የአፑን ዳታዎች እዚህ state ውስጥ እንይዛለን
   const [item, setItem] = useState({
     name: "",
     description: "",
     price: "",
     category: "",
     address: "",
-    image: null,
+    skinType: "All", // አዲስ የተጨመረ
+    ingredients: "", // አዲስ የተጨመረ
+    howToUse: "", // አዲስ የተጨመረ
+    images: [], // ለብዙ ፎቶዎች የተስተካከለ
   });
-  const [preview, setPreview] = useState(null);
+
+  const [preview, setPreview] = useState([]); // ለብዙ ፎቶዎች preview
   const [uploading, setUploading] = useState(false);
 
   const handleChange = (e) => {
@@ -26,45 +32,70 @@ const useProductForm = () => {
     }));
   };
 
+  // 2. ብዙ ፎቶዎችን ለመቀበል የተስተካከለ
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setItem((prev) => ({
-      ...prev,
-      image: file,
-    }));
-    setPreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    if (files.length > 5) {
+      alert("ከ 5 በላይ ፎቶ መምረጥ አይቻልም!");
+      return;
+    }
+    setItem((prev) => ({ ...prev, images: files }));
+
+    const filePreviews = files.map((file) => URL.createObjectURL(file));
+    setPreview(filePreviews);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUploading(true);
-    try {
-      let imageUrl = "";
-      if (item.image) {
-        const storageRef = ref(storage, `images/${item.image.name}`);
-        const uploadTask = await uploadBytesResumable(storageRef, item.image);
-        imageUrl = await getDownloadURL(uploadTask.ref);
-      }
 
+    try {
+      // 3. ፎቶዎችን ወደ Firebase Storage መጫን
+      const imageUrls = await Promise.all(
+        item.images.map(async (file) => {
+          const storageRef = ref(
+            storage,
+            `products/${Date.now()}_${file.name}`
+          );
+          const uploadTask = await uploadBytesResumable(storageRef, file);
+          return await getDownloadURL(uploadTask.ref);
+        })
+      );
+
+      // 4. ሁሉንም ዳታ በአንድ ላይ አደራጅቶ ወደ Firestore መላክ
       const newItem = {
-        ...item,
+        name: item.name,
+        description: item.description,
         price: parseFloat(item.price),
-        image: imageUrl,
+        category: item.category,
+        address: item.address,
+        skinType: item.skinType, // አዲስ
+        ingredients: item.ingredients, // አዲስ
+        howToUse: item.howToUse, // አዲስ
+        images: imageUrls, // የፎቶዎቹ ሊንክ
         userID,
+        createdAt: new Date(),
       };
 
       await addProduct(newItem);
+
+      // 5. ቅጹን ወደ ነበረበት መመለስ (Reset)
       setItem({
         name: "",
         description: "",
         price: "",
         category: "",
         address: "",
-        image: null,
+        skinType: "All",
+        ingredients: "",
+        howToUse: "",
+        images: [],
       });
-      setPreview(null);
+      setPreview([]);
+      alert("ምርቱ በትክክል ተመዝግቧል!");
     } catch (error) {
       console.error("Error adding item: ", error);
+      alert("ስህተት ተፈጥሯል፣ እባክዎ እንደገና ይሞክሩ።");
     } finally {
       setUploading(false);
     }

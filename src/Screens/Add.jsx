@@ -51,30 +51,95 @@ const Add = () => {
               value={item.description}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-              rows="4"
+              rows="3"
               placeholder="Enter product description"
               required
             ></textarea>
           </div>
 
-          {/* Price - Corrected Label to (Br) */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Price */}
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-semibold mb-2"
+                htmlFor="price"
+              >
+                Price (Br)
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={item.price}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="0.00"
+                required
+              />
+            </div>
+
+            {/* Category */}
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-semibold mb-2"
+                htmlFor="category"
+              >
+                Category
+              </label>
+              <select
+                id="category"
+                name="category"
+                value={item.category}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                required
+              >
+                <option value="" disabled>
+                  Select
+                </option>
+                <option value="Perfume">Perfume</option>
+                <option value="Lotion">Lotion</option>
+                <option value="Facial">Facial</option>
+                <option value="Treatment">Treatment</option>
+                <option value="Hair">Hair</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
+
+          {/* --- አዲስ የተጨመሩ የኮስሞቲክስ መረጃዎች --- */}
+
+          {/* Skin Type Selection */}
           <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="price"
-            >
-              Price (Br)
+            <label className="block text-gray-700 text-sm font-semibold mb-2">
+              Suitable Skin Type ✨
             </label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={item.price}
+            <select
+              name="skinType"
+              value={item.skinType}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-              placeholder="Enter price"
-              required
-            />
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+            >
+              <option value="All">All Skin Types</option>
+              <option value="Oily">Oily Skin</option>
+              <option value="Dry">Dry Skin</option>
+              <option value="Sensitive">Sensitive Skin</option>
+            </select>
+          </div>
+
+          {/* Ingredients Textarea */}
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-semibold mb-2">
+              Key Ingredients 🧪
+            </label>
+            <textarea
+              name="ingredients"
+              value={item.ingredients}
+              onChange={handleChange}
+              placeholder="e.g. Aloe Vera, Vitamin C, Hyaluronic Acid"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+              rows="2"
+            ></textarea>
           </div>
 
           {/* Address */}
@@ -92,40 +157,12 @@ const Add = () => {
               value={item.address}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-              placeholder="Enter item address"
+              placeholder="Shop location"
               required
             />
           </div>
 
-          {/* Category */}
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="category"
-            >
-              Category
-            </label>
-            <select
-              id="category"
-              name="category"
-              value={item.category}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-              required
-            >
-              <option value="" disabled>
-                Select category
-              </option>
-              <option value="Perfume">Perfume</option>
-              <option value="Lotion">Lotion</option>
-              <option value="Facial">Facial</option>
-              <option value="Treatment">Treatment</option>
-              <option value="Hair">Hair</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
-
-          {/* Upload Images - UPDATED FOR MULTIPLE FILES */}
+          {/* Upload Images */}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
@@ -140,18 +177,17 @@ const Add = () => {
               accept="image/*"
               onChange={handleImageChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-              multiple /* <-- IMPORTANT: Allows multiple file selection */
+              multiple
             />
 
-            {/* Image Preview - UPDATED TO MAP MULTIPLE PREVIEWS */}
             {preview.length > 0 && (
               <div className="mt-4 grid grid-cols-2 gap-4">
                 {preview.map((imgSrc, index) => (
                   <div key={index} className="relative">
                     <img
                       src={imgSrc}
-                      alt={`Image Preview ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg"
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg shadow-sm"
                     />
                   </div>
                 ))}
