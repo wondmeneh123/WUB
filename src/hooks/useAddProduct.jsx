@@ -3,27 +3,44 @@ import { db } from "../fb";
 import { useGetUser } from "./useGetUser";
 
 export const useAddProduct = () => {
-  // Reference to the 'products' collection in Firestore
   const productCollectionRef = collection(db, "products");
   const { userID } = useGetUser();
 
   /**
-   * Function to add a new product to Firestore.
-   * Accepts a 'data' object containing product details (name, price, skinType, ingredients, images, etc.)
+   * addProduct accepts a full product object. Expected shape:
+   * { name, description, price, category, address, images, skinType, ingredients, howToUse, badges }
    */
-  const addProduct = async (data) => {
-    try {
-      // Add a new document with the spread data, current userID, and a server-side timestamp
-      await addDoc(productCollectionRef, {
-        ...data, // Spreads all fields like skinType, ingredients, images array, etc.
-        userID,
-        createdAt: serverTimestamp(),
-      });
-    } catch (error) {
-      // Log error if the operation fails
-      console.error("Error adding document to Firestore: ", error);
-      throw error;
-    }
+  const addProduct = async (product) => {
+    const {
+      name = "",
+      description = "",
+      price = 0,
+      category = "",
+      address = "",
+      images = [],
+      skinType = "All",
+      ingredients = "",
+      howToUse = "",
+      badges = "",
+    } = product || {};
+
+    const payload = {
+      userID,
+      name,
+      description,
+      price: typeof price === "string" ? parseFloat(price) || 0 : price,
+      category,
+      address,
+      images,
+      skinType,
+      ingredients,
+      howToUse,
+      badges,
+      createdAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(productCollectionRef, payload);
+    return docRef;
   };
 
   return { addProduct };
