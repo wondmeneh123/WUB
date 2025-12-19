@@ -1,0 +1,65 @@
+📄 Project Requirement Document (PRD)
+Project Name: "WUB" Digital Marketplace & Cosmetic Catalog
+
+1. Introduction
+The WUB Marketplace is a modern digital platform designed to showcase premium cosmetic, skin, and hair care products imported from international markets and sourced locally. The primary objective of the application is to act as a high-conversion digital catalog. Instead of processing direct payments, it bridges the gap between digital discovery and physical purchase by enabling customers to contact the seller directly or visit the physical store after viewing detailed product information.
+
+2. Product Categories
+To enhance user navigation, products are organized into four major categories:
+
+Women’s Care: Makeup, facial creams, hair treatments, and perfumes.
+
+Men’s Care: Beard grooming kits, deodorants, and masculine skincare.
+
+Baby Care: Gentle soaps, pediatric lotions, and baby powders.
+
+Personal Care: Oral hygiene, body washes, and shampoos.
+
+3. Core Technical Features
+A. Advanced Product Catalog
+Each listing is designed to provide maximum transparency, similar to global platforms like Jiji or Amazon:
+
+Visual Assets: Support for up to 5 high-resolution images per product to show packaging and texture.
+
+Dynamic Badges: Visual indicators such as "New Arrival" or "Flash Sale" to drive urgency.
+
+Dermatological Indicators: Clear labels for skin compatibility (Oily, Dry, Sensitive, or Normal).
+
+Ingredient Transparency: A detailed section listing active ingredients to build customer trust.
+
+B. Lead Generation & Contact Features
+The app focuses on turning viewers into leads through:
+
+One-Click Call: Integrated dialer to contact the shop instantly.
+
+WhatsApp Integration: Auto-generated messages containing product links for easy inquiries.
+
+Geolocation: Google Maps integration to guide customers to the physical storefront.
+
+C. Search & Discovery
+Global Search: A fast search bar for names, brands, or categories.
+
+Smart Filters: Sorting by price (Low to High) and filtering by specific skin concerns or categories.
+
+4. Admin Dashboard (Merchant Portal)
+A secure backend for staff to manage the marketplace without technical help:
+
+Content Management: Effortlessly upload images and descriptions.
+
+Inventory Status: Real-time "In Stock" vs. "Out of Stock" toggles.
+
+Pricing Engine: Ability to update prices and apply discount percentages instantly.
+
+5. User Journey (UX Flow)
+Home Screen: Users browse curated collections and seasonal promotions.
+
+Engagement: Users click on a product to view its ingredients and benefits.
+
+Conversion: The user clicks "Call" or "WhatsApp" to verify availability and arrange for purchase or delivery.
+
+6. Business Value & Strategic Impact
+24/7 Digital Presence: The storefront is always "open" for browsing, even during off-hours.
+
+Brand Authority: A dedicated app elevates the business above competitors using only social media.
+
+Consumer Insights: Analytics on which products are viewed most help optimize future import stock.
