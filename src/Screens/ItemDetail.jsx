@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
-import { MdOutlineScience, MdAutoFixHigh, MdOutlineInfo } from "react-icons/md";
+import {
+  MdOutlineScience,
+  MdAutoFixHigh,
+  MdOutlineInfo,
+  MdLocationOn,
+} from "react-icons/md";
 import PropTypes from "prop-types";
 
 const ItemDetail = ({ addToCart }) => {
@@ -9,6 +14,10 @@ const ItemDetail = ({ addToCart }) => {
   const navigate = useNavigate();
   const { item } = location.state || {};
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Fallback image if everything fails
+  const placeholderImage =
+    "https://via.placeholder.com/400?text=No+Image+Available";
 
   if (!item) {
     return (
@@ -26,177 +35,206 @@ const ItemDetail = ({ addToCart }) => {
     );
   }
 
-  const images = item.images || [];
+  // LOGIC: Filter out any null, undefined or empty strings from the images array
+  const rawImages = Array.isArray(item.images)
+    ? item.images
+    : item.image
+    ? [item.image]
+    : [];
 
-  const storePhone = item.phone || "+2519..."; // replace with real number if available
-  const waMessage = `Hi, I'm interested in ${item.name} from WUB Marketplace. ${window.location.href}`;
-  const waLink = `https://wa.me/?text=${encodeURIComponent(waMessage)}`;
+  // Clean the array to make sure only valid URLs exist
+  const images = rawImages.filter(
+    (img) => img && typeof img === "string" && img.trim() !== ""
+  );
+
+  const storePhone = item.phone || "+251900000000";
+  const waMessage = `Hi, I'm interested in ${item.name} from WUB Marketplace.`;
+  const waLink = `https://wa.me/${storePhone.replace(
+    "+",
+    ""
+  )}?text=${encodeURIComponent(waMessage)}`;
   const telLink = `tel:${storePhone}`;
+
+  // MAPS FIX: Final fix for the string template
   const mapsLink = item.address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
         item.address
       )}`
-    : "https://www.google.com/maps";
+    : "#";
 
   const handleNext = () => setCurrentImageIndex((p) => (p + 1) % images.length);
   const handlePrev = () =>
     setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
 
-  const handleAddToCart = () => {
-    if (addToCart) addToCart(item);
-    else console.warn("addToCart not provided");
-  };
-
   return (
-    <div className="bg-white min-h-screen">
-      {/* Header */}
-      <div className="flex items-center p-4 bg-white sticky top-0 z-10 shadow-sm">
+    <div className="bg-gray-50 min-h-screen pb-40">
+      {/* Sticky Header */}
+      <div className="flex items-center p-4 bg-white sticky top-0 z-50 shadow-sm">
         <button
           onClick={() => navigate(-1)}
-          className="text-pink-600 p-2 hover:bg-gray-100 rounded-full"
+          className="text-pink-600 p-2 hover:bg-pink-50 rounded-full transition-colors"
         >
           <IoIosArrowBack size={24} />
         </button>
-        <h1 className="text-lg font-semibold text-gray-800 ml-3 truncate">
+        <h1 className="text-lg font-bold text-gray-800 ml-2 truncate">
           {item.name}
         </h1>
       </div>
 
-      <div className="px-4 pb-40">
-        {/* Simple Carousel (no Swiper) */}
-        <div className="rounded-lg overflow-hidden mt-4 relative">
-          {images.length > 0 ? (
-            <>
+      <div className="max-w-2xl mx-auto">
+        {/* Image Slider Section */}
+        <div className="bg-white relative group">
+          <div className="relative h-80 sm:h-[450px] w-full overflow-hidden flex items-center justify-center">
+            {images.length > 0 ? (
+              <>
+                <img
+                  key={currentImageIndex}
+                  src={images[currentImageIndex]}
+                  alt={item.name}
+                  className="max-w-full max-h-full object-contain transition-opacity duration-300"
+                  // Error handling if the URL is broken
+                  onError={(e) => {
+                    e.target.src = placeholderImage;
+                  }}
+                />
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={handlePrev}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg"
+                    >
+                      ❮
+                    </button>
+                    <button
+                      onClick={handleNext}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg"
+                    >
+                      ❯
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                      {images.map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-1.5 rounded-full transition-all ${
+                            i === currentImageIndex
+                              ? "w-6 bg-pink-500"
+                              : "w-1.5 bg-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
               <img
-                src={images[currentImageIndex]}
-                alt={`${item.name} ${currentImageIndex + 1}`}
-                className="w-full h-72 sm:h-96 object-contain bg-white"
+                src={placeholderImage}
+                alt="Placeholder"
+                className="max-w-full max-h-full object-contain"
               />
-
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={handlePrev}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={handleNext}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md"
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-            </>
-          ) : (
-            <div className="flex items-center justify-center bg-gray-100 h-72 sm:h-96">
-              <div className="p-6 text-gray-500">No images</div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        <div className="max-w-xl mx-auto mt-4 space-y-6">
-          <div className="flex items-start justify-between">
+        {/* Product Info Section */}
+        <div className="p-5 space-y-6">
+          <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{item.name}</h2>
-              <p className="text-pink-500 font-semibold mt-1">
-                {item.badges || ""}
-              </p>
+              <span className="text-xs font-bold uppercase tracking-wider text-pink-500 bg-pink-50 px-2 py-1 rounded">
+                {item.category || "General"}
+              </span>
+              <h2 className="text-2xl font-extrabold text-gray-900 mt-2">
+                {item.name}
+              </h2>
             </div>
-            <div className="text-right">
-              <p className="text-lg font-bold">
-                {item.price ? `ETB ${item.price}` : ""}
-              </p>
+            <p className="text-2xl font-black text-gray-900">
+              ETB {item.price}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
+              <div className="bg-pink-100 text-pink-600 p-3 rounded-xl">
+                <MdAutoFixHigh size={20} />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Skin Type</p>
+                <p className="font-bold text-gray-800">
+                  {item.skinType || "All Skin Types"}
+                </p>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
+              <div className="bg-blue-100 text-blue-600 p-3 rounded-xl">
+                <MdLocationOn size={20} />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">
+                  Availability
+                </p>
+                <p className="font-bold text-gray-800 truncate w-40">
+                  {item.address || "In Stock"}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="grid gap-4">
-            <div className="bg-white rounded-md p-4 shadow-sm flex items-start gap-3">
-              <div className="bg-pink-50 text-pink-600 p-2 rounded-lg">
-                <MdAutoFixHigh size={18} />
+          <div className="space-y-4">
+            <section className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-3 text-purple-600">
+                <MdOutlineScience size={20} />
+                <h3 className="font-bold">Ingredients</h3>
               </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-700">Skin Type</h3>
-                <p className="mt-1 text-gray-800">{item.skinType || "All"}</p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-md p-4 shadow-sm flex items-start gap-3">
-              <div className="bg-purple-50 text-purple-600 p-2 rounded-lg">
-                <MdOutlineScience size={18} />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-700">
-                  Ingredients
-                </h3>
-                <p className="mt-1 text-gray-700 whitespace-pre-line text-sm leading-relaxed">
-                  {item.ingredients || "Not specified."}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-md p-4 shadow-sm flex items-start gap-3">
-              <div className="bg-amber-50 text-amber-700 p-2 rounded-lg">
-                <MdOutlineInfo size={18} />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-700">
-                  How To Use
-                </h3>
-                <p className="mt-1 text-gray-700 whitespace-pre-line text-sm leading-relaxed">
-                  {item.howToUse || "Not specified."}
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-medium text-gray-700">Description</h3>
-              <p className="mt-2 text-gray-600 text-sm leading-relaxed">
-                {item.description}
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {item.ingredients || "Contact us for detailed ingredient list."}
               </p>
-            </div>
+            </section>
 
-            <p className="text-sm text-gray-500 italic">
-              📍 Location: {item.address || "Not provided"}
-            </p>
+            <section className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-3 text-amber-600">
+                <MdOutlineInfo size={20} />
+                <h3 className="font-bold">How To Use</h3>
+              </div>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {item.howToUse || "Apply as directed by a specialist."}
+              </p>
+            </section>
           </div>
         </div>
       </div>
 
-      {/* Sticky bottom area: Add to Cart + contact buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t z-50">
-        <div className="max-w-xl mx-auto p-3">
+      {/* Floating Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-4 z-50">
+        <div className="max-w-xl mx-auto space-y-3">
           <button
-            onClick={handleAddToCart}
-            className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold mb-2"
+            onClick={() => addToCart && addToCart(item)}
+            className="w-full bg-pink-600 hover:bg-pink-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-pink-200 transition-all active:scale-95"
           >
             Add to Cart
           </button>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             <a
               href={telLink}
-              className="block text-center bg-pink-100 text-pink-700 py-2 rounded"
+              className="flex flex-col items-center justify-center bg-gray-100 py-2 rounded-xl text-gray-700 hover:bg-gray-200"
             >
-              Call Now
+              <span className="text-xs font-bold">Call Now</span>
             </a>
             <a
               href={waLink}
               target="_blank"
               rel="noreferrer"
-              className="block text-center bg-green-100 text-green-700 py-2 rounded"
+              className="flex flex-col items-center justify-center bg-green-500 py-2 rounded-xl text-white hover:bg-green-600"
             >
-              WhatsApp
+              <span className="text-xs font-bold">WhatsApp</span>
             </a>
             <a
               href={mapsLink}
               target="_blank"
               rel="noreferrer"
-              className="block text-center bg-gray-100 text-gray-700 py-2 rounded"
+              className="flex flex-col items-center justify-center bg-blue-500 py-2 rounded-xl text-white hover:bg-blue-600"
             >
-              Location
+              <span className="text-xs font-bold">Location</span>
             </a>
           </div>
         </div>
