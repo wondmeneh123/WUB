@@ -8,8 +8,12 @@ import {
   MdLocationOn,
   MdPhone,
   MdStore,
+  MdShare,
+  MdContentCopy,
 } from "react-icons/md";
 import PropTypes from "prop-types";
+// ካለህበት ዳይሬክተሪ አንጻር የሪቪው ፋይልን Import እናደርጋለን
+import ProductReviews from "./ProductReviews";
 
 const ItemDetail = ({ addToCart }) => {
   const location = useLocation();
@@ -25,36 +29,56 @@ const ItemDetail = ({ addToCart }) => {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-gray-600">No product selected.</p>
+          <p className="text-gray-600">ምርት አልተመረጠም (No product selected).</p>
           <button
             className="mt-4 px-4 py-2 bg-pink-500 text-white rounded"
             onClick={() => navigate(-1)}
           >
-            Go Back
+            ተመለስ (Go Back)
           </button>
         </div>
       </div>
     );
   }
 
-  // IMAGE LOGIC: Handle both array (images) and single string (image)
+  // IMAGE LOGIC
   const rawImages = Array.isArray(item.images)
     ? item.images
     : item.image
     ? [item.image]
     : [];
 
-  // Filter out any empty strings or nulls
   const images = rawImages.filter(
     (img) => img && typeof img === "string" && img.trim() !== ""
   );
 
-  // CONTACT LOGIC: Get store details from the item data
+  // CONTACT & STORE LOGIC
   const storePhone = item.phone || item.phoneNumber || "+251900000000";
   const storeAddress = item.address || "Addis Ababa, Ethiopia";
   const storeName = item.storeName || "WUB Shop";
 
-  // ACTION LINKS
+  // ACTION FUNCTIONS
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(storeAddress);
+    alert("አድራሻው ኮፒ ተደርጓል!");
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: item.name,
+          text: `ይህንን ምርት በውብ ማርኬት (WUB Marketplace) ተመልከቱት: ${item.name}`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.error("Sharing failed", err);
+      }
+    } else {
+      alert("ይህ ብሮውዘር Share ማድረግ አይፈቅድም። ሊንኩን ኮፒ አድርገው ይላኩ።");
+    }
+  };
+
   const waMessage = `Hi, I'm interested in ${item.name} from WUB Marketplace.`;
   const waLink = `https://wa.me/${storePhone.replace(
     /\+/g,
@@ -71,17 +95,25 @@ const ItemDetail = ({ addToCart }) => {
 
   return (
     <div className="bg-gray-50 min-h-screen pb-44">
-      {/* Sticky Header */}
-      <div className="flex items-center p-4 bg-white sticky top-0 z-50 shadow-sm">
+      {/* Sticky Header with Share */}
+      <div className="flex items-center justify-between p-4 bg-white sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-pink-600 p-2 hover:bg-pink-50 rounded-full transition-colors"
+          >
+            <IoIosArrowBack size={24} />
+          </button>
+          <h1 className="text-lg font-bold text-gray-800 ml-2 truncate max-w-[200px]">
+            {item.name}
+          </h1>
+        </div>
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleShare}
           className="text-pink-600 p-2 hover:bg-pink-50 rounded-full transition-colors"
         >
-          <IoIosArrowBack size={24} />
+          <MdShare size={24} />
         </button>
-        <h1 className="text-lg font-bold text-gray-800 ml-2 truncate">
-          {item.name}
-        </h1>
       </div>
 
       <div className="max-w-2xl mx-auto">
@@ -154,11 +186,19 @@ const ItemDetail = ({ addToCart }) => {
             </p>
           </div>
 
-          {/* STORE INFO SECTION (Phone and Address) */}
+          {/* STORE INFO SECTION with Copy Button */}
           <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">
-              Store Information
-            </h3>
+            <div className="flex justify-between items-center">
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                Store Information
+              </h3>
+              <button
+                onClick={handleCopyAddress}
+                className="flex items-center gap-1 text-xs text-pink-600 font-bold bg-pink-50 px-2 py-1 rounded-lg active:scale-95 transition-all"
+              >
+                <MdContentCopy size={14} /> ኮፒ
+              </button>
+            </div>
 
             <div className="flex items-center gap-4">
               <div className="bg-pink-100 text-pink-600 p-2.5 rounded-xl">
@@ -193,7 +233,7 @@ const ItemDetail = ({ addToCart }) => {
             </div>
           </div>
 
-          {/* Product Details (Ingredients & Usage) */}
+          {/* Product Type Detail */}
           <div className="grid grid-cols-1 gap-4">
             <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
               <div className="bg-purple-100 text-purple-600 p-3 rounded-xl">
@@ -210,6 +250,7 @@ const ItemDetail = ({ addToCart }) => {
             </div>
           </div>
 
+          {/* Ingredients & Usage */}
           <div className="space-y-4">
             <section className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
               <div className="flex items-center gap-2 mb-3 text-purple-600">
@@ -232,6 +273,9 @@ const ItemDetail = ({ addToCart }) => {
               </p>
             </section>
           </div>
+
+          {/* Product Reviews Section (imported from ProductReviews.jsx) */}
+          <ProductReviews reviews={item.reviews} />
         </div>
       </div>
 
