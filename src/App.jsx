@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import BottomNavigation from "./componenets/BottomNavigation";
 import { Auth } from "./Screens/Auth";
 import "./App.css";
