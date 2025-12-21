@@ -6,6 +6,8 @@ import {
   MdAutoFixHigh,
   MdOutlineInfo,
   MdLocationOn,
+  MdPhone,
+  MdStore,
 } from "react-icons/md";
 import PropTypes from "prop-types";
 
@@ -15,7 +17,7 @@ const ItemDetail = ({ addToCart }) => {
   const { item } = location.state || {};
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Fallback image if everything fails
+  // Fallback image if product has no photo
   const placeholderImage =
     "https://via.placeholder.com/400?text=No+Image+Available";
 
@@ -35,39 +37,40 @@ const ItemDetail = ({ addToCart }) => {
     );
   }
 
-  // LOGIC: Filter out any null, undefined or empty strings from the images array
+  // IMAGE LOGIC: Handle both array (images) and single string (image)
   const rawImages = Array.isArray(item.images)
     ? item.images
     : item.image
     ? [item.image]
     : [];
 
-  // Clean the array to make sure only valid URLs exist
+  // Filter out any empty strings or nulls
   const images = rawImages.filter(
     (img) => img && typeof img === "string" && img.trim() !== ""
   );
 
-  const storePhone = item.phone || "+251900000000";
+  // CONTACT LOGIC: Get store details from the item data
+  const storePhone = item.phone || item.phoneNumber || "+251900000000";
+  const storeAddress = item.address || "Addis Ababa, Ethiopia";
+  const storeName = item.storeName || "WUB Shop";
+
+  // ACTION LINKS
   const waMessage = `Hi, I'm interested in ${item.name} from WUB Marketplace.`;
   const waLink = `https://wa.me/${storePhone.replace(
-    "+",
+    /\+/g,
     ""
   )}?text=${encodeURIComponent(waMessage)}`;
   const telLink = `tel:${storePhone}`;
-
-  // MAPS FIX: Final fix for the string template
-  const mapsLink = item.address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        item.address
-      )}`
-    : "#";
+  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    storeAddress
+  )}`;
 
   const handleNext = () => setCurrentImageIndex((p) => (p + 1) % images.length);
   const handlePrev = () =>
     setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-40">
+    <div className="bg-gray-50 min-h-screen pb-44">
       {/* Sticky Header */}
       <div className="flex items-center p-4 bg-white sticky top-0 z-50 shadow-sm">
         <button
@@ -92,7 +95,6 @@ const ItemDetail = ({ addToCart }) => {
                   src={images[currentImageIndex]}
                   alt={item.name}
                   className="max-w-full max-h-full object-contain transition-opacity duration-300"
-                  // Error handling if the URL is broken
                   onError={(e) => {
                     e.target.src = placeholderImage;
                   }}
@@ -136,7 +138,7 @@ const ItemDetail = ({ addToCart }) => {
           </div>
         </div>
 
-        {/* Product Info Section */}
+        {/* Product Info & Store Details */}
         <div className="p-5 space-y-6">
           <div className="flex justify-between items-start">
             <div>
@@ -152,28 +154,57 @@ const ItemDetail = ({ addToCart }) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-              <div className="bg-pink-100 text-pink-600 p-3 rounded-xl">
-                <MdAutoFixHigh size={20} />
+          {/* STORE INFO SECTION (Phone and Address) */}
+          <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-4">
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+              Store Information
+            </h3>
+
+            <div className="flex items-center gap-4">
+              <div className="bg-pink-100 text-pink-600 p-2.5 rounded-xl">
+                <MdStore size={22} />
               </div>
               <div>
-                <p className="text-xs text-gray-500 font-medium">Skin Type</p>
-                <p className="font-bold text-gray-800">
-                  {item.skinType || "All Skin Types"}
+                <p className="text-xs text-gray-500">Shop Name</p>
+                <p className="font-bold text-gray-800">{storeName}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="bg-blue-100 text-blue-600 p-2.5 rounded-xl">
+                <MdLocationOn size={22} />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500">Location / Address</p>
+                <p className="font-bold text-gray-800 leading-tight">
+                  {storeAddress}
                 </p>
               </div>
             </div>
+
+            <div className="flex items-center gap-4">
+              <div className="bg-green-100 text-green-600 p-2.5 rounded-xl">
+                <MdPhone size={22} />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Phone Number</p>
+                <p className="font-bold text-gray-800">{storePhone}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Product Details (Ingredients & Usage) */}
+          <div className="grid grid-cols-1 gap-4">
             <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-              <div className="bg-blue-100 text-blue-600 p-3 rounded-xl">
-                <MdLocationOn size={20} />
+              <div className="bg-purple-100 text-purple-600 p-3 rounded-xl">
+                <MdAutoFixHigh size={20} />
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">
-                  Availability
+                  Product Type
                 </p>
-                <p className="font-bold text-gray-800 truncate w-40">
-                  {item.address || "In Stock"}
+                <p className="font-bold text-gray-800">
+                  {item.skinType || "Standard"}
                 </p>
               </div>
             </div>
@@ -186,7 +217,8 @@ const ItemDetail = ({ addToCart }) => {
                 <h3 className="font-bold">Ingredients</h3>
               </div>
               <p className="text-gray-600 text-sm leading-relaxed">
-                {item.ingredients || "Contact us for detailed ingredient list."}
+                {item.ingredients ||
+                  "Contact the store for the full ingredient list."}
               </p>
             </section>
 
@@ -196,15 +228,15 @@ const ItemDetail = ({ addToCart }) => {
                 <h3 className="font-bold">How To Use</h3>
               </div>
               <p className="text-gray-600 text-sm leading-relaxed">
-                {item.howToUse || "Apply as directed by a specialist."}
+                {item.howToUse || "Follow the instructions on the packaging."}
               </p>
             </section>
           </div>
         </div>
       </div>
 
-      {/* Floating Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-4 z-50">
+      {/* Fixed Bottom Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 p-4 z-50">
         <div className="max-w-xl mx-auto space-y-3">
           <button
             onClick={() => addToCart && addToCart(item)}
@@ -216,25 +248,25 @@ const ItemDetail = ({ addToCart }) => {
           <div className="grid grid-cols-3 gap-3">
             <a
               href={telLink}
-              className="flex flex-col items-center justify-center bg-gray-100 py-2 rounded-xl text-gray-700 hover:bg-gray-200"
+              className="flex flex-col items-center justify-center bg-gray-100 py-3 rounded-xl text-gray-700 hover:bg-gray-200"
             >
-              <span className="text-xs font-bold">Call Now</span>
+              <span className="text-xs font-bold uppercase">Call</span>
             </a>
             <a
               href={waLink}
               target="_blank"
               rel="noreferrer"
-              className="flex flex-col items-center justify-center bg-green-500 py-2 rounded-xl text-white hover:bg-green-600"
+              className="flex flex-col items-center justify-center bg-green-500 py-3 rounded-xl text-white hover:bg-green-600"
             >
-              <span className="text-xs font-bold">WhatsApp</span>
+              <span className="text-xs font-bold uppercase">WhatsApp</span>
             </a>
             <a
               href={mapsLink}
               target="_blank"
               rel="noreferrer"
-              className="flex flex-col items-center justify-center bg-blue-500 py-2 rounded-xl text-white hover:bg-blue-600"
+              className="flex flex-col items-center justify-center bg-blue-500 py-3 rounded-xl text-white hover:bg-blue-600"
             >
-              <span className="text-xs font-bold">Location</span>
+              <span className="text-xs font-bold uppercase">Map</span>
             </a>
           </div>
         </div>
