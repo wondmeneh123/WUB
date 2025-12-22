@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const Notifications = () => {
   const navigate = useNavigate();
 
+  // Mock data for notifications
   const notifications = [
     {
       id: 1,
@@ -30,7 +31,7 @@ const Notifications = () => {
 
   return (
     <div className="bg-white min-h-screen pb-32 font-sans">
-      {/* 1. Header Area - Synced with Add Product style */}
+      {/* 1. Header Section - Consistent with the app's design language */}
       <div className="pt-8 px-4 max-w-2xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <button
@@ -53,7 +54,7 @@ const Notifications = () => {
         </div>
       </div>
 
-      {/* 2. Notifications List */}
+      {/* 2. Main List of Notifications */}
       <div className="px-4 max-w-2xl mx-auto">
         {notifications.length > 0 ? (
           <div className="space-y-4">
@@ -62,7 +63,7 @@ const Notifications = () => {
                 key={notif.id}
                 className="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/40 flex gap-4 hover:border-pink-200 transition-all"
               >
-                {/* Icon based on notification type */}
+                {/* Dynamic Icon based on the notification category */}
                 <div
                   className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center ${
                     notif.type === "system"
@@ -77,7 +78,7 @@ const Notifications = () => {
                   )}
                 </div>
 
-                {/* Content Section */}
+                {/* Text Content: Title, Time and Message */}
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <h3 className="font-bold text-gray-800 text-lg">
@@ -91,7 +92,7 @@ const Notifications = () => {
                     {notif.message}
                   </p>
 
-                  {/* Status Indicator */}
+                  {/* Visual Status Indicator */}
                   <div className="mt-3 flex items-center gap-1.5">
                     <MdOutlineCircle
                       className={
@@ -110,7 +111,7 @@ const Notifications = () => {
             ))}
           </div>
         ) : (
-          /* Empty State - Shown when no notifications are available */
+          /* Empty State - Visual feedback when there are no alerts */
           <div className="flex flex-col items-center justify-center pt-20">
             <div className="bg-gray-50 p-10 rounded-full border border-gray-100">
               <MdNotificationsNone size={80} className="text-gray-200" />
@@ -119,7 +120,7 @@ const Notifications = () => {
               All caught up!
             </h3>
             <p className="text-gray-400 text-center px-10 mt-2 text-md">
-              We'll let you know when something important happens!
+              We&apos;ll let you know when something important happens!
             </p>
           </div>
         )}
