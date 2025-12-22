@@ -1,19 +1,22 @@
 import { MdLogout } from "react-icons/md";
+import PropTypes from "prop-types";
 
 const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
+  // If modal is not open, don't render anything
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Background Overlay */}
+      {/* Semi-transparent background overlay */}
       <div
         className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
         onClick={onClose}
       ></div>
 
-      {/* Modal Content */}
+      {/* Main modal container with animation */}
       <div className="relative bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
         <div className="flex flex-col items-center text-center">
+          {/* Logout Icon wrapper */}
           <div className="w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center mb-6">
             <MdLogout size={40} className="text-[#E91E63] ml-2" />
           </div>
@@ -24,12 +27,15 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
           </p>
 
           <div className="flex flex-col w-full gap-3">
+            {/* Confirmation button */}
             <button
               onClick={onConfirm}
               className="w-full py-4 bg-[#E91E63] text-white rounded-2xl font-black text-lg shadow-lg shadow-pink-200 active:scale-95 transition-all"
             >
               Yes, Log Me Out
             </button>
+
+            {/* Cancel/Close button */}
             <button
               onClick={onClose}
               className="w-full py-4 bg-gray-50 text-gray-400 rounded-2xl font-bold text-lg active:scale-95 transition-all"
@@ -41,6 +47,13 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
       </div>
     </div>
   );
+};
+
+// Define expected prop types for validation
+LogoutModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
 };
 
 export default LogoutModal;
