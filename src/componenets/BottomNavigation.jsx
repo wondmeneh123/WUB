@@ -1,6 +1,6 @@
 // src/componenets/BottomNavigation.jsx
-import { Route, Routes, NavLink, useLocation } from "react-router-dom";
-import PropTypes from "prop-types"; // 1. ይህንን ጨምር
+import { Route, Routes, NavLink } from "react-router-dom"; // useLocation ተወግዷል
+import PropTypes from "prop-types";
 import "./components.css";
 import { IoPersonSharp } from "react-icons/io5";
 import { BiHome } from "react-icons/bi";
@@ -16,7 +16,7 @@ import Header from "./Header";
 import Notifications from "../Screens/Notifications";
 
 const BottomNavigation = ({ cart, setCart }) => {
-  const location = useLocation();
+  // const location = useLocation(); // ይህ መስመር ተወግዷል
 
   const addToCart = (itemToAdd) => {
     setCart((prevCart) => {
@@ -51,7 +51,9 @@ const BottomNavigation = ({ cart, setCart }) => {
   return (
     <div className="bg-[#FFF5F7]">
       <Header />
-      <div className="flex-1">
+      <div className="flex-1 pb-20">
+        {" "}
+        {/* ከታች ማርጂን እንዲኖረው pb-20 ጨምሬበታለሁ */}
         <Routes>
           <Route path="/shop" element={<Shop />} />
           <Route path="/add" element={<Add />} />
@@ -78,7 +80,6 @@ const BottomNavigation = ({ cart, setCart }) => {
         </Routes>
       </div>
 
-      {/* Bottom Nav UI stays the same... */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#FFEBEE] shadow-lg border-t border-pink-200 z-50">
         <div className="flex justify-around p-4">
           <NavLink
@@ -139,7 +140,6 @@ const BottomNavigation = ({ cart, setCart }) => {
   );
 };
 
-// 2. Prop Validation (ይህ ESLint ስህተቱን ያጠፋል)
 BottomNavigation.propTypes = {
   cart: PropTypes.array.isRequired,
   setCart: PropTypes.func.isRequired,
