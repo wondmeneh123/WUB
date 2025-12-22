@@ -14,9 +14,10 @@ import {
   MdPublic,
   MdInventory,
   MdGavel,
+  MdChat,
 } from "react-icons/md";
 import PropTypes from "prop-types";
-
+import ChatButton from "../componenets/ChatButton";
 import ProductReviews from "./ProductReviews";
 import RelatedProducts from "./RelatedProducts";
 import SocialConnect from "./SocialConnect";
@@ -299,7 +300,35 @@ const ItemDetail = ({ addToCart }) => {
               </div>
             </div>
           </div>
+          {/* START CHAT SECTION - እዚህ ጋር ጨምረው */}
+          <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="bg-pink-50 p-3 rounded-full text-pink-600">
+                  <MdChat size={24} />
+                </div>
+                {/* Online Status Dot */}
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-800 text-sm">Start Chat</h4>
+                <p className="text-[11px] text-gray-500">
+                  Typically replies in 5 mins
+                </p>
+              </div>
+            </div>
 
+            <button
+              onClick={() =>
+                navigate("/chat", {
+                  state: { storeName: item.storeName, item: item },
+                })
+              }
+              className="bg-pink-600 text-white px-6 py-2 rounded-xl text-xs font-bold shadow-md shadow-pink-100 active:scale-95 transition-transform"
+            >
+              CHAT
+            </button>
+          </div>
           <SocialConnect links={socialLinks} />
 
           <div className="space-y-4">

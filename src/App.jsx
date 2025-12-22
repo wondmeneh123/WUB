@@ -10,7 +10,7 @@ import BottomNavigation from "./componenets/BottomNavigation";
 import { Auth } from "./Screens/Auth";
 import ItemDetail from "./Screens/ItemDetail";
 import "./App.css";
-
+import Chat from "./Screens/Chat";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -50,7 +50,7 @@ function App() {
                 path="/item/:id"
                 element={<ItemDetail addToCart={addToCart} />}
               />
-
+              <Route path="/chat" element={<Chat />} />
               {/* 4. ካርቱን እና ሴተር ፈንክሽኑን ለ BottomNavigation አስተላልፍ */}
               <Route
                 path="*"
