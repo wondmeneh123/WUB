@@ -1,5 +1,5 @@
-// src/componenets/BottomNavigation.jsx
-import { Route, Routes, NavLink } from "react-router-dom"; // useLocation ተወግዷል
+// src/components/BottomNavigation.jsx
+import { Route, Routes, NavLink } from "react-router-dom";
 import PropTypes from "prop-types";
 import "./components.css";
 import { IoPersonSharp } from "react-icons/io5";
@@ -16,8 +16,7 @@ import Header from "./Header";
 import Notifications from "../Screens/Notifications";
 
 const BottomNavigation = ({ cart, setCart }) => {
-  // const location = useLocation(); // ይህ መስመር ተወግዷል
-
+  // Logic for adding items to the cart
   const addToCart = (itemToAdd) => {
     setCart((prevCart) => {
       const existingItemIndex = prevCart.findIndex(
@@ -32,6 +31,7 @@ const BottomNavigation = ({ cart, setCart }) => {
     });
   };
 
+  // Logic for updating item quantity in the cart
   const updateCartQuantity = (itemId, change) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
@@ -42,6 +42,7 @@ const BottomNavigation = ({ cart, setCart }) => {
     );
   };
 
+  // Logic for removing items from the cart
   const removeFromCart = (itemId) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
   };
@@ -51,9 +52,8 @@ const BottomNavigation = ({ cart, setCart }) => {
   return (
     <div className="bg-[#FFF5F7]">
       <Header />
+      {/* Main content area with bottom padding to avoid overlap with navigation */}
       <div className="flex-1 pb-20">
-        {" "}
-        {/* ከታች ማርጂን እንዲኖረው pb-20 ጨምሬበታለሁ */}
         <Routes>
           <Route path="/shop" element={<Shop />} />
           <Route path="/add" element={<Add />} />
@@ -80,6 +80,7 @@ const BottomNavigation = ({ cart, setCart }) => {
         </Routes>
       </div>
 
+      {/* Fixed Bottom Navigation Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#FFEBEE] shadow-lg border-t border-pink-200 z-50">
         <div className="flex justify-around p-4">
           <NavLink
