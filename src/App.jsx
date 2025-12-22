@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -13,10 +14,30 @@ import "./App.css";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // 1. ካርቱን እዚህ ጋር ፍጠር (ለ ItemDetail እና ለ BottomNavigation እንዲደርስ)
+  const [cart, setCart] = useState([]);
+
   useEffect(() => {
     const authData = localStorage.getItem("auth");
     setIsAuthenticated(!!authData);
   }, []);
+
+  // 2. እቃ ወደ ካርት የሚጨምር ፈንክሽን
+  const addToCart = (itemToAdd) => {
+    setCart((prevCart) => {
+      const existingItemIndex = prevCart.findIndex(
+        (item) => item.id === itemToAdd.id
+      );
+
+      if (existingItemIndex > -1) {
+        const newCart = [...prevCart];
+        newCart[existingItemIndex].quantity += 1;
+        return newCart;
+      } else {
+        return [...prevCart, { ...itemToAdd, quantity: 1 }];
+      }
+    });
+  };
 
   return (
     <Router>
@@ -24,11 +45,17 @@ function App() {
         {isAuthenticated ? (
           <>
             <Routes>
-              {/* 1. ምርት ሲነካ የሚከፈተው ገጽ (ይህ ከላይ መሆን አለበት) */}
-              <Route path="/item/:id" element={<ItemDetail />} />
+              {/* 3. addToCart ፈንክሽኑን ለ ItemDetail አስተላልፍ */}
+              <Route
+                path="/item/:id"
+                element={<ItemDetail addToCart={addToCart} />}
+              />
 
-              {/* 2. ሌላ ማንኛውም አድራሻ ሲመጣ (Home/Shop) BottomNavigation እንዲታይ */}
-              <Route path="*" element={<BottomNavigation />} />
+              {/* 4. ካርቱን እና ሴተር ፈንክሽኑን ለ BottomNavigation አስተላልፍ */}
+              <Route
+                path="*"
+                element={<BottomNavigation cart={cart} setCart={setCart} />}
+              />
             </Routes>
           </>
         ) : (
