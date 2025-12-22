@@ -49,7 +49,7 @@ const ItemDetail = ({ addToCart }) => {
     );
   }
 
-  // LOGIC
+  // IMAGE LOGIC
   const rawImages = Array.isArray(item.images)
     ? item.images
     : item.image
@@ -59,10 +59,11 @@ const ItemDetail = ({ addToCart }) => {
     (img) => img && typeof img === "string" && img.trim() !== ""
   );
 
+  // DYNAMIC STORE DATA (Based on the specific item)
   const storePhone = item.phone || item.phoneNumber || "+251900000000";
-  const storeAddress = item.address || "አድራሻ አልተገለጸም";
+  const storeAddress = item.address || "Address not specified";
   const storeLocation = `${item.city || "Addis Ababa"} • ${
-    item.subCity || "Addis Ketema"
+    item.subCity || "Location"
   }`;
   const storeSchedule = item.workingHours || "Mon - Sat, 08:00 - 18:00";
 
@@ -171,7 +172,7 @@ const ItemDetail = ({ addToCart }) => {
             </div>
           </div>
 
-          {/* Product Quick Specs */}
+          {/* Quick Specs */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center gap-3">
               <MdLabel className="text-purple-500" />
@@ -197,7 +198,7 @@ const ItemDetail = ({ addToCart }) => {
             </div>
           </div>
 
-          {/* Detailed Specifications Card */}
+          {/* Detailed Specs Card */}
           <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
             <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 flex items-center gap-2">
               <MdListAlt className="text-pink-600" /> Detailed Specifications
@@ -210,9 +211,7 @@ const ItemDetail = ({ addToCart }) => {
                 </p>
               </div>
               <div className="pl-4">
-                <p className="text-gray-400 text-xs uppercase">
-                  Country of Origin
-                </p>
+                <p className="text-gray-400 text-xs uppercase">Origin</p>
                 <div className="flex items-center gap-1">
                   <MdPublic className="text-blue-400" size={14} />
                   <p className="font-bold text-gray-700">
@@ -220,32 +219,18 @@ const ItemDetail = ({ addToCart }) => {
                   </p>
                 </div>
               </div>
-              <div className="border-r pr-4 pt-2 border-t mt-2">
-                <p className="text-gray-400 text-xs uppercase">
-                  Net Weight/Size
-                </p>
-                <p className="font-bold text-gray-700">
-                  {item.size || item.weight || "N/A"}
-                </p>
-              </div>
-              <div className="pl-4 pt-2 border-t mt-2">
-                <p className="text-gray-400 text-xs uppercase">Material</p>
-                <p className="font-bold text-gray-700">
-                  {item.material || "Quality Grade"}
-                </p>
-              </div>
             </div>
           </div>
 
-          {/* Store Information */}
+          {/* Store Information Section */}
           <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest">
-                Store Information
+              <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest flex items-center gap-2">
+                <MdChat className="text-pink-600" size={18} /> Store Information
               </h3>
               <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>{" "}
-                Open now
+                Open
               </span>
             </div>
 
@@ -264,12 +249,26 @@ const ItemDetail = ({ addToCart }) => {
                     </p>
                   </div>
                 </div>
-                <a
-                  href={`tel:${storePhone}`}
-                  className="bg-green-500 text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95"
-                >
-                  CALL
-                </a>
+
+                {/* CALL & CHAT Buttons */}
+                <div className="flex gap-2">
+                  <a
+                    href={`tel:${storePhone}`}
+                    className="bg-green-500 text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95 transition-transform"
+                  >
+                    CALL
+                  </a>
+                  <button
+                    onClick={() =>
+                      navigate("/chat", {
+                        state: { storeName: item.storeName, item: item },
+                      })
+                    }
+                    className="bg-pink-600 text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95 transition-transform shadow-sm"
+                  >
+                    CHAT
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-start gap-3">
@@ -294,58 +293,31 @@ const ItemDetail = ({ addToCart }) => {
 
               <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-dashed border-gray-200">
                 <MdAccessTime className="text-amber-600" size={18} />
-                <p className="text-xs font-bold text-gray-600 tracking-tight">
+                <p className="text-xs font-bold text-gray-600">
                   {storeSchedule}
                 </p>
               </div>
             </div>
           </div>
-          {/* START CHAT SECTION - እዚህ ጋር ጨምረው */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="bg-pink-50 p-3 rounded-full text-pink-600">
-                  <MdChat size={24} />
-                </div>
-                {/* Online Status Dot */}
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-800 text-sm">Start Chat</h4>
-                <p className="text-[11px] text-gray-500">
-                  Typically replies in 5 mins
-                </p>
-              </div>
-            </div>
 
-            <button
-              onClick={() =>
-                navigate("/chat", {
-                  state: { storeName: item.storeName, item: item },
-                })
-              }
-              className="bg-pink-600 text-white px-6 py-2 rounded-xl text-xs font-bold shadow-md shadow-pink-100 active:scale-95 transition-transform"
-            >
-              CHAT
-            </button>
-          </div>
           <SocialConnect links={socialLinks} />
 
+          {/* Ingredients & Use */}
           <div className="space-y-4">
             <section className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
               <h3 className="font-bold flex items-center gap-2 mb-3 text-purple-600">
                 <MdOutlineScience /> Ingredients
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {item.ingredients || "Contact store for details."}
+              <p className="text-gray-600 text-sm">
+                {item.ingredients || "Contact store."}
               </p>
             </section>
             <section className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
               <h3 className="font-bold flex items-center gap-2 mb-3 text-amber-600">
                 <MdOutlineInfo /> How To Use
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {item.howToUse || "Follow packaging instructions."}
+              <p className="text-gray-600 text-sm">
+                {item.howToUse || "Follow packaging."}
               </p>
             </section>
           </div>
@@ -355,6 +327,7 @@ const ItemDetail = ({ addToCart }) => {
         </div>
       </div>
 
+      {/* Floating Bottom Add to Cart */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t p-4 z-50">
         <button
           onClick={handleAddToCart}
