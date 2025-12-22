@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom"; // Link ተጨምሯል
+import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack, IoMdCheckmarkCircle } from "react-icons/io";
-import { HiMiniBellAlert } from "react-icons/hi2"; // አዲሱ Header icon
-import { FiShoppingCart, FiUser } from "react-icons/fi"; // አዲሱ Header icons
 import {
   MdOutlineScience,
   MdOutlineInfo,
@@ -61,7 +59,7 @@ const ItemDetail = ({ addToCart }) => {
     (img) => img && typeof img === "string" && img.trim() !== ""
   );
 
-  // DYNAMIC STORE DATA
+  // DYNAMIC STORE DATA (Based on the specific item)
   const storePhone = item.phone || item.phoneNumber || "+251900000000";
   const storeAddress = item.address || "Address not specified";
   const storeLocation = `${item.city || "Addis Ababa"} • ${
@@ -94,47 +92,20 @@ const ItemDetail = ({ addToCart }) => {
 
   return (
     <div className="bg-gray-50 min-h-screen pb-44">
-      {/* --- የአንተ አዲሱ Header ክፍል --- */}
-      <div className="bg-white shadow-md sticky top-0 z-50">
-        <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => navigate(-1)}
-              className="text-indigo-600 mr-2"
-            >
-              <IoIosArrowBack size={24} />
-            </button>
-            <p className="font-extrabold text-2xl text-indigo-600 tracking-wide">
-              WUB<span className="text-gray-800">Mart</span>
-            </p>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Link
-              to="/notifications"
-              className="text-gray-600 hover:text-pink-600 transition-colors"
-            >
-              <HiMiniBellAlert size={24} />
-            </Link>
-
-            <Link
-              to="/cart"
-              className="text-gray-600 hover:text-pink-600 transition-colors relative"
-            >
-              <FiShoppingCart size={24} />
-              <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></span>
-            </Link>
-
-            <Link
-              to="/profile"
-              className="text-gray-600 hover:text-pink-600 transition-colors"
-            >
-              <FiUser size={24} />
-            </Link>
-          </div>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 bg-white sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center">
+          <button onClick={() => navigate(-1)} className="text-pink-600 p-2">
+            <IoIosArrowBack size={24} />
+          </button>
+          <h1 className="text-lg font-bold text-gray-800 ml-2 truncate max-w-[200px]">
+            {item.name}
+          </h1>
         </div>
+        <button className="text-pink-600 p-2">
+          <MdShare size={24} />
+        </button>
       </div>
-      {/* --- Header መጨረሻ --- */}
 
       <div className="max-w-2xl mx-auto">
         {/* Slider Section */}
@@ -166,10 +137,6 @@ const ItemDetail = ({ addToCart }) => {
               </button>
             </div>
           )}
-          {/* Share button moved to top of image area */}
-          <button className="absolute top-4 right-4 bg-white/80 text-pink-600 p-2 rounded-full shadow-sm">
-            <MdShare size={24} />
-          </button>
         </div>
 
         <div className="p-5 space-y-6">
@@ -283,6 +250,7 @@ const ItemDetail = ({ addToCart }) => {
                   </div>
                 </div>
 
+                {/* CALL & CHAT Buttons */}
                 <div className="flex gap-2">
                   <a
                     href={`tel:${storePhone}`}
