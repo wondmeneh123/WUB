@@ -13,6 +13,8 @@ import useProductForm from "../hooks/useProductForm";
 const Add = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Custom hook to manage product form logic and state
   const {
     item,
     preview,
@@ -22,14 +24,15 @@ const Add = () => {
     handleSubmit,
   } = useProductForm();
 
+  // Helper function to identify the current active navigation link
   const isActive = (path) => location.pathname === path;
 
   return (
-    // Background ወደ መደበኛው ነጭ ተመልሷል
+    // Main wrapper with white background and padding for bottom nav
     <div className="min-h-screen bg-white pb-24 font-sans">
-      {/* 1. Content Area */}
+      {/* 1. Page Content Section */}
       <div className="pt-8 px-4 max-w-2xl mx-auto">
-        {/* Title & Back Button */}
+        {/* Header with Back Button and Page Title */}
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate(-1)}
@@ -37,16 +40,16 @@ const Add = () => {
           >
             <MdArrowBackIos size={20} className="ml-1" />
           </button>
-          {/* Add New Product - ደመቅ ያለ ሮዝ ተደርጓል */}
+
           <h1 className="text-3xl font-black text-[#E91E63] tracking-tight">
             Add New Product
           </h1>
         </div>
 
-        {/* 2. Form Card */}
+        {/* 2. Product Form Container */}
         <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Product Name */}
+            {/* Field: Product Name */}
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
                 Product Name
@@ -62,7 +65,7 @@ const Add = () => {
               />
             </div>
 
-            {/* Description */}
+            {/* Field: Description */}
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
                 Description
@@ -72,12 +75,12 @@ const Add = () => {
                 value={item.description}
                 onChange={handleChange}
                 className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none min-h-[120px]"
-                placeholder="Enter product description"
+                placeholder="Describe your product details..."
                 required
               ></textarea>
             </div>
 
-            {/* Price & Category */}
+            {/* Grid Layout for Price and Category */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
@@ -106,7 +109,7 @@ const Add = () => {
                   required
                 >
                   <option value="" disabled>
-                    Select
+                    Select Category
                   </option>
                   <option value="Perfume">Perfume</option>
                   <option value="Lotion">Lotion</option>
@@ -115,7 +118,7 @@ const Add = () => {
               </div>
             </div>
 
-            {/* Shop Location */}
+            {/* Field: Shop Location with Icon */}
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
                 Shop Location
@@ -137,7 +140,7 @@ const Add = () => {
               </div>
             </div>
 
-            {/* Image Upload */}
+            {/* Section: Image Upload with Drag & Drop Area */}
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
                 Product Images
@@ -156,10 +159,11 @@ const Add = () => {
                   size={40}
                 />
                 <p className="text-sm text-gray-500 mt-2 font-medium">
-                  Tap to upload photos
+                  Click or tap to upload photos
                 </p>
               </div>
 
+              {/* Horizontal Scroll for Image Previews */}
               {preview.length > 0 && (
                 <div className="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                   {preview.map((imgSrc, index) => (
@@ -174,7 +178,7 @@ const Add = () => {
               )}
             </div>
 
-            {/* Submit Button - ደመቅ ያለ ሮዝ */}
+            {/* Action: Form Submit Button */}
             <div className="pt-4">
               <button
                 type="submit"
@@ -192,7 +196,7 @@ const Add = () => {
         </div>
       </div>
 
-      {/* 3. Bottom Navigation Bar */}
+      {/* 3. Global Bottom Navigation Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-gray-100 py-3 px-8 flex items-center justify-between z-50">
         <button
           onClick={() => navigate("/")}
