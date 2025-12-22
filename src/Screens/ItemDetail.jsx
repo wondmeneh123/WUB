@@ -17,7 +17,7 @@ import {
   MdChat,
 } from "react-icons/md";
 import PropTypes from "prop-types";
-import ChatButton from "../componenets/ChatButton";
+
 import ProductReviews from "./ProductReviews";
 import RelatedProducts from "./RelatedProducts";
 import SocialConnect from "./SocialConnect";
