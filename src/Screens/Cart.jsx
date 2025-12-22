@@ -1,14 +1,16 @@
 // src/Screens/Cart.jsx
-
 import {
   MdOutlineRemoveCircleOutline,
   MdAddCircleOutline,
   MdDeleteForever,
+  MdArrowBackIos,
 } from "react-icons/md";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
-// Cart component receives the cart state and the setter functions as props
 const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
+  const navigate = useNavigate();
+
   const getTotal = () => {
     return cart
       .reduce(
@@ -20,7 +22,7 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
 
   if (cart.length === 0) {
     return (
-      <div className="p-6 text-center h-full flex flex-col justify-center items-center">
+      <div className="p-6 text-center h-full flex flex-col justify-center items-center min-h-screen">
         <MdOutlineRemoveCircleOutline
           size={60}
           className="text-gray-400 mb-4"
@@ -28,69 +30,79 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
         <h2 className="text-2xl font-bold text-gray-700 mb-2">
           Your Cart is Empty
         </h2>
-        <p className="text-gray-500">
-          Looks like you haven&apos;t added anything to your cart yet.{" "}
-          {/* Corrected: 'haven't' changed to 'haven&apos;t' */}
+        <p className="text-gray-500 mb-6">
+          Looks like you haven&apos;t added anything to your cart yet.
         </p>
+        <button
+          onClick={() => navigate(-1)}
+          className="px-6 py-2 bg-pink-600 text-white rounded-full font-bold shadow-md active:scale-95 transition-all"
+        >
+          Go Back
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="p-4 pb-32 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-extrabold text-[#d43790] mb-6 border-b pb-2">
-        Shopping Cart ({cart.length} unique items)
-      </h1>
+    <div className="p-4 pb-44 bg-gray-50 min-h-screen">
+      {/* Header with Back Button */}
+      <div className="flex items-center gap-4 mb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2 bg-white rounded-full shadow-sm text-pink-600 active:scale-90 transition-all"
+        >
+          <MdArrowBackIos size={20} className="ml-1" />
+        </button>
+        <h1 className="text-2xl font-extrabold text-[#d43790]">
+          Shopping Cart
+        </h1>
+      </div>
+
       {/* Cart Items List */}
       <div className="flex flex-col gap-4">
         {cart.map((item) => (
           <div
             key={item.id}
-            className="bg-white p-4 rounded-xl shadow-md flex items-center gap-4"
+            className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
             {/* Item Image */}
             <img
               src={item.image}
               alt={item.name}
-              className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+              className="w-20 h-20 object-cover rounded-xl flex-shrink-0"
             />
-            {/* Item Details and Controls */}
-            <div className="flex flex-col flex-grow">
-              <h3 className="text-lg font-semibold truncate text-gray-800">
+
+            {/* Item Details */}
+            <div className="flex flex-col flex-grow min-w-0">
+              <h3 className="text-base font-bold truncate text-gray-800">
                 {item.name}
               </h3>
-              <p className="text-sm text-gray-500 mb-2">{item.category}</p>
-              {/* Price and Quantity */}
-              <div className="flex items-center justify-between mt-2">
-                {/* Display calculated subtotal for the item */}
-                <p className="text-xl font-bold text-green-600">
+              <p className="text-xs text-gray-400 mb-2">{item.category}</p>
+
+              <div className="flex items-center justify-between">
+                <p className="text-lg font-black text-pink-600">
                   {(parseFloat(item.price) * item.quantity).toFixed(2)} Br
                 </p>
 
                 {/* Quantity Controls */}
-                <div className="flex items-center space-x-2">
-                  {/* Decrement Button */}
+                <div className="flex items-center bg-gray-50 rounded-lg px-2 py-1 gap-3">
                   <button
                     onClick={() => updateCartQuantity(item.id, -1)}
-                    className="text-red-500 disabled:text-gray-300"
+                    className="text-gray-400 hover:text-red-500 disabled:opacity-30"
                     disabled={item.quantity <= 1}
-                    aria-label="Decrease quantity"
                   >
-                    <MdOutlineRemoveCircleOutline size={24} />
+                    <MdOutlineRemoveCircleOutline size={22} />
                   </button>
 
-                  {/* Quantity Display */}
-                  <span className="text-lg font-bold w-6 text-center">
+                  <span className="text-sm font-bold w-4 text-center">
                     {item.quantity}
                   </span>
 
-                  {/* Increment Button */}
                   <button
                     onClick={() => updateCartQuantity(item.id, 1)}
-                    className="text-green-500"
-                    aria-label="Increase quantity"
+                    className="text-pink-500"
                   >
-                    <MdAddCircleOutline size={24} />
+                    <MdAddCircleOutline size={22} />
                   </button>
                 </div>
               </div>
@@ -99,8 +111,7 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
             {/* Remove Button */}
             <button
               onClick={() => removeFromCart(item.id)}
-              className="text-gray-400 hover:text-red-600 transition-colors"
-              aria-label={`Remove ${item.name} from cart`}
+              className="text-gray-300 hover:text-red-600 transition-colors p-1"
             >
               <MdDeleteForever size={24} />
             </button>
@@ -109,26 +120,32 @@ const Cart = ({ cart, updateCartQuantity, removeFromCart }) => {
       </div>
 
       {/* Cart Summary (Fixed at the bottom) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl p-4 border-t-4 border-[#d43790] z-40">
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-xl font-semibold text-gray-700">Total:</p>
-          <p className="text-2xl font-extrabold text-[#d43790]">
-            {getTotal()} Br
-          </p>
-        </div>
+      <div className="fixed bottom-20 left-0 right-0 bg-white/90 backdrop-blur-md shadow-[0_-10px_20px_rgba(0,0,0,0,0.05)] p-5 border-t border-gray-100 z-40">
+        <div className="max-w-md mx-auto">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">
+                Subtotal
+              </p>
+              <p className="text-2xl font-black text-gray-800">
+                {getTotal()}{" "}
+                <span className="text-sm font-normal text-gray-500">Br</span>
+              </p>
+            </div>
+            <p className="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              {cart.length} Items
+            </p>
+          </div>
 
-        <button
-          className="w-full bg-pink-600 text-white py-3 rounded-full shadow-lg hover:bg-pink-700 transition-colors font-bold text-lg"
-          // onClick={() => navigate('/checkout')}
-        >
-          Proceed to Checkout
-        </button>
+          <button className="w-full bg-pink-600 text-white py-4 rounded-2xl shadow-lg shadow-pink-200 hover:bg-pink-700 active:scale-[0.98] transition-all font-bold text-lg">
+            Proceed to Checkout
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-// 2. Define propTypes for Cart component
 Cart.propTypes = {
   cart: PropTypes.arrayOf(
     PropTypes.shape({
