@@ -1,6 +1,7 @@
 // C:\Users\DrDj92\Desktop\holistic\WUB\src\Screens\ProductReviews.jsx
 import { useState } from "react";
 import { MdStar, MdClose, MdSend } from "react-icons/md";
+import PropTypes from "prop-types"; // Prop Validation ለመስራት ተጨምሯል
 
 const ProductReviews = ({ reviews = [] }) => {
   const [showForm, setShowForm] = useState(false);
@@ -190,6 +191,19 @@ const ProductReviews = ({ reviews = [] }) => {
       </div>
     </section>
   );
+};
+
+// Prop Types Validation - ESLint ስህተቱን የሚያጠፋው ይሄኛው ክፍል ነው
+ProductReviews.propTypes = {
+  reviews: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      user: PropTypes.string.isRequired,
+      rating: PropTypes.number.isRequired,
+      comment: PropTypes.string.isRequired,
+      date: PropTypes.string,
+    })
+  ),
 };
 
 export default ProductReviews;

@@ -1,23 +1,18 @@
-// src/Screens/Shop.jsx
-
 import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../fb"; // Adjust the import path as necessary
-// ESLint FIX: Removed 'MdDiscount'
+import { db } from "../fb";
 import { MdFace4, MdAutoFixNormal } from "react-icons/md";
 import { TbPerfume } from "react-icons/tb";
 import { PiHairDryerThin } from "react-icons/pi";
 import { BiSearch } from "react-icons/bi";
 import { FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
-// import Heder from "../componenets/Header";
 import Carousel from "../componenets/Courasel";
 
 const Shop = () => {
   const [items, setItems] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null); // State for selected category
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +36,6 @@ const Shop = () => {
     { name: "Hair", icon: <PiHairDryerThin size={24} /> },
   ];
 
-  // Filter items based on selected category and search query
   const filteredItems = items.filter((item) => {
     const matchesCategory = selectedCategory
       ? item.category === selectedCategory
@@ -53,21 +47,15 @@ const Shop = () => {
   });
 
   const showItemDetail = (item) => {
-    navigate(`/item/${item.id}`, { state: { item } });
+    navigate(`/item/${item.id}`, { state: { item, allItems: items } });
   };
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category === selectedCategory ? null : category);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   return (
-    // LAYOUT/SCROLLING: Kept as requested
     <div className="h-screen flex flex-col">
-      {/* <Heder /> */}
       <div className="mt-1 overflow-y-auto flex-1">
         <div className="flex items-center justify-between gap-3 px-5 my-6">
           <div className="flex bg-white items-center w-full p-2 rounded-2xl">
@@ -77,17 +65,19 @@ const Shop = () => {
               className="ml-2 w-full focus:border-transparent focus:outline-none"
               placeholder="Search..."
               value={searchQuery}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="p-3 rounded-full active:border-0 active:border-white bg-[#d43790] text-white">
             <FiFilter size={20} />
           </div>
         </div>
+
         <div className="px-4">
           <Carousel />
         </div>
-        <div className="flex overflow-x-scroll gap-2 px-4 text-sm my-2 justify-around">
+
+        <div className="flex overflow-x-scroll gap-2 px-4 text-sm my-2 justify-around no-scrollbar">
           {categories.map((cate) => (
             <div
               key={cate.name}
@@ -103,6 +93,7 @@ const Shop = () => {
             </div>
           ))}
         </div>
+
         <div className="flex flex-col overflow-y-scroll pb-5">
           <div className="px-4 text-xl font-semibold columns-2 gap-4 mb-16">
             {filteredItems.map((item) => (
@@ -123,14 +114,14 @@ const Shop = () => {
                   className="w-full w rounded-2xl cursor-pointer"
                 />
                 <div className="mt-2">
-                  <p className="font-bold tracking-normal truncate">
+                  <p className="font-bold tracking-normal truncate text-sm">
                     {item.name}
                   </p>
-                  <p className="text-sm text-gray-500 truncate">
+                  <p className="text-xs text-gray-500 truncate">
                     {item.description}
                   </p>
                   <p className="text-lg font-semibold text-[#d43790]">
-                    {item.price} Br
+                    ETB {item.price}
                   </p>
                 </div>
               </div>

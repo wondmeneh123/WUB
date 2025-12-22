@@ -1,58 +1,35 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, where, limit, getDocs } from "firebase/firestore";
-import { db } from "../fb";
-import PropTypes from "prop-types"; // 1. PropTypesን import አድርግ
+import PropTypes from "prop-types";
 
-const RelatedProducts = ({ currentItem }) => {
-  const [related, setRelated] = useState([]);
-  const [loading, setLoading] = useState(true);
+const RelatedProducts = ({ products, currentItem }) => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchRelated = async () => {
-      if (!currentItem?.category) return;
+  // Filter products by the same category, excluding the one currently being viewed
+  const related = products
+    .filter(
+      (p) => p.category === currentItem.category && p.id !== currentItem.id
+    )
+    .slice(0, 6);
 
-      setLoading(true);
-      try {
-        const productsRef = collection(db, "products");
-        const q = query(
-          productsRef,
-          where("category", "==", currentItem.category),
-          limit(10)
-        );
-
-        const querySnapshot = await getDocs(q);
-        const docs = querySnapshot.docs
-          .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .filter((p) => p.id !== currentItem.id)
-          .slice(0, 6);
-
-        setRelated(docs);
-      } catch (error) {
-        console.error("Related products fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRelated();
-  }, [currentItem]);
-
-  if (loading || related.length === 0) return null;
+  // If no related products are found, don't render anything
+  if (related.length === 0) return null;
 
   return (
     <div className="mt-8 mb-12">
       <h3 className="text-lg font-extrabold text-gray-800 mb-4 px-1">
-        ተመሳሳይ ምርቶች (Related Products)
+        Related Products
       </h3>
 
-      <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
+      <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
         {related.map((prod) => (
           <div
             key={prod.id}
             onClick={() => {
-              navigate("/item-detail", { state: { item: prod } });
+              // Pass both the selected item and the full product list to the next route
+              navigate(`/item/${prod.id}`, {
+                state: { item: prod, allItems: products },
+              });
+              // Ensure the page scrolls to the top for the new product
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             className="min-w-[160px] max-w-[160px] bg-white rounded-2xl p-2 shadow-sm border border-gray-100 active:scale-95 transition-all cursor-pointer"
@@ -77,11 +54,11 @@ const RelatedProducts = ({ currentItem }) => {
   );
 };
 
-// 2. የ Props Validation እዚህ ጋር ጨምር
 RelatedProducts.propTypes = {
+  products: PropTypes.array.isRequired,
   currentItem: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
+    category: PropTypes.string,
   }).isRequired,
 };
 
