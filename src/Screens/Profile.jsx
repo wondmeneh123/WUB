@@ -1,7 +1,7 @@
-// src/Screens/Profile.jsx
 import { useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { MdArrowBackIos, MdSettings } from "react-icons/md"; // Added icons
 import { db } from "../fb";
 
 const Profile = () => {
@@ -10,7 +10,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [authUserID, setAuthUserID] = useState(null);
 
-  // --- 1. Load User Authentication Data from LocalStorage ---
+  // 1. Load User Authentication Data from LocalStorage
   useEffect(() => {
     const authData = localStorage.getItem("auth");
     if (authData) {
@@ -20,7 +20,7 @@ const Profile = () => {
     }
   }, []);
 
-  // --- 2. Fetch Products Posted by the Specific User from Firestore ---
+  // 2. Fetch Products Posted by the Specific User from Firestore
   useEffect(() => {
     const fetchItems = async (userID) => {
       if (!userID) return;
@@ -45,113 +45,138 @@ const Profile = () => {
     }
   }, [authUserID]);
 
-  // --- 3. Function to Navigate to Item Details Page ---
+  // 3. Navigation Helper
   const showItemDetail = (item) => {
     navigate(`/item/${item.id}`, { state: { item } });
   };
 
   if (!user)
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"></div>
+      <div className="min-h-screen flex justify-center items-center bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E91E63]"></div>
       </div>
     );
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-10">
-      {/* Header Section */}
-      <div className="fixed top-0 left-0 right-0 bg-white shadow-sm py-3 z-10 border-b">
-        <h2 className="font-bold text-xl text-center text-gray-800">Profile</h2>
-      </div>
-
-      {/* User Info Section (Photo, Name, Occupation) */}
-      <div className="flex flex-col items-center pt-24">
-        <div className="relative">
-          <img
-            width={120}
-            height={120}
-            src={
-              user.profilePhoto ||
-              "https://img.freepik.com/premium-vector/portrait-avatar-male-laughter-joy-smile-calmness-diversity-personage_147933-10265.jpg"
-            }
-            alt="Profile"
-            className="rounded-full shadow-lg border-4 border-white w-28 h-28 object-cover"
-          />
-        </div>
-        <h2 className="font-bold text-2xl mt-4 text-gray-800">{user.name}</h2>
-        <h3 className="text-lg text-gray-500">{user.occupation || "Member"}</h3>
-      </div>
-
-      {/* Profile Statistics (Ads Count, Rating) */}
-      <div className="flex justify-around mx-5 py-5 mt-8 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-2xl shadow-lg">
-        <div className="text-center border-r border-pink-400 w-1/2">
-          <h3 className="font-bold text-2xl">{items.length}</h3>
-          <p className="text-xs uppercase tracking-wider opacity-80">
-            Ads Posted
-          </p>
-        </div>
-        <div className="text-center w-1/2">
-          <h3 className="font-bold text-2xl">4.8</h3>
-          <p className="text-xs uppercase tracking-wider opacity-80">Rating</p>
-        </div>
-      </div>
-
-      {/* User's Ad Listings Grid */}
-      <div className="mx-5 mt-10 mb-20">
-        <h3 className="text-xl font-bold text-gray-800 mb-6 border-l-4 border-pink-500 pl-3">
-          Your Listings
-        </h3>
-        <div className="grid grid-cols-2 gap-4">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white shadow-md rounded-2xl overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
-              onClick={() => showItemDetail(item)}
+    <div className="bg-white min-h-screen pb-24 font-sans">
+      {/* 1. Header Area - Synced with other screens */}
+      <div className="pt-8 px-4 max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 bg-gray-50 rounded-full text-gray-600 hover:text-pink-600 active:scale-90 transition-all"
             >
-              <div className="h-40 overflow-hidden relative">
-                {/* Displaying the first image from the array */}
-                <img
-                  src={
-                    item.images && item.images.length > 0
-                      ? item.images[0]
-                      : "https://via.placeholder.com/300x300?text=No+Image"
-                  }
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-                {/* Indicator for additional images */}
-                {item.images && item.images.length > 1 && (
-                  <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-[10px] px-2 py-1 rounded-md">
-                    +{item.images.length - 1} more
-                  </div>
-                )}
-              </div>
-              <div className="p-3">
-                <p className="font-bold text-gray-800 truncate text-sm">
-                  {item.name}
-                </p>
-                <p className="text-xs text-gray-400 truncate mt-1">
-                  {item.description}
-                </p>
-                <p className="text-md font-extrabold text-pink-600 mt-2">
-                  {item.price.toLocaleString()} Br
-                </p>
-              </div>
+              <MdArrowBackIos size={20} className="ml-1" />
+            </button>
+            <h1 className="text-3xl font-black text-[#E91E63] tracking-tight">
+              Profile
+            </h1>
+          </div>
+
+          {/* Settings icon as an extra touch */}
+          <button className="p-2 text-gray-400 hover:text-gray-600">
+            <MdSettings size={24} />
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4">
+        {/* 2. User Identity Card */}
+        <div className="flex flex-col items-center bg-white p-8 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50 relative overflow-hidden">
+          {/* Decorative Background Circle */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-50 rounded-full opacity-50"></div>
+
+          <div className="relative">
+            <img
+              src={
+                user.profilePhoto ||
+                "https://img.freepik.com/premium-vector/portrait-avatar-male-laughter-joy-smile-calmness-diversity-personage_147933-10265.jpg"
+              }
+              alt="Profile"
+              className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover z-10 relative"
+            />
+            <div className="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
+          </div>
+
+          <h2 className="font-black text-2xl mt-4 text-gray-800">
+            {user.name}
+          </h2>
+          <p className="text-gray-400 font-bold text-sm uppercase tracking-widest mt-1">
+            {user.occupation || "WUB Member"}
+          </p>
+
+          {/* 3. Profile Statistics */}
+          <div className="flex w-full mt-8 pt-6 border-t border-gray-50">
+            <div className="flex-1 text-center border-r border-gray-50">
+              <h3 className="font-black text-xl text-gray-800">
+                {items.length}
+              </h3>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                Ads Posted
+              </p>
             </div>
-          ))}
+            <div className="flex-1 text-center">
+              <h3 className="font-black text-xl text-gray-800">4.8</h3>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                User Rating
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Empty State Message */}
-        {items.length === 0 && (
-          <div className="text-center py-10">
-            <p className="text-gray-400 text-lg italic">
-              You haven't posted any ads yet.
-            </p>
+        {/* 4. Listings Grid Header */}
+        <div className="mt-10 flex items-center justify-between mb-6">
+          <h3 className="text-xl font-black text-gray-800">Your Listings</h3>
+          <span className="text-xs font-bold text-pink-500 bg-pink-50 px-3 py-1 rounded-full">
+            Recent first
+          </span>
+        </div>
+
+        {/* 5. Listings Grid */}
+        {items.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-[1.5rem] border border-gray-100 shadow-lg shadow-gray-100/30 overflow-hidden cursor-pointer active:scale-95 transition-all"
+                onClick={() => showItemDetail(item)}
+              >
+                <div className="h-40 relative">
+                  <img
+                    src={
+                      item.images?.[0] ||
+                      "https://via.placeholder.com/300x300?text=No+Image"
+                    }
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg">
+                    <p className="text-[10px] font-black text-[#E91E63]">
+                      {item.price?.toLocaleString()} Br
+                    </p>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <h4 className="font-bold text-gray-800 text-sm truncate">
+                    {item.name}
+                  </h4>
+                  <p className="text-[10px] text-gray-400 font-medium mt-1 uppercase tracking-tighter truncate">
+                    {item.category || "General"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* Empty State */
+          <div className="text-center py-16 bg-gray-50 rounded-[2rem] border border-dashed border-gray-200">
+            <p className="text-gray-400 font-bold italic">No ads posted yet.</p>
             <button
               onClick={() => navigate("/add")}
-              className="mt-4 text-pink-500 font-semibold underline"
+              className="mt-4 text-[#E91E63] font-black text-sm uppercase underline tracking-widest"
             >
-              Post your first ad
+              Post First Ad
             </button>
           </div>
         )}
