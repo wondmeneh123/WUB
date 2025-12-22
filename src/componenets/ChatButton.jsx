@@ -3,13 +3,12 @@ import { MdChat } from "react-icons/md";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-const ChatButton = ({ storeName, productId }) => {
+const ChatButton = ({ storeName, item }) => {
   const navigate = useNavigate();
 
   const handleStartChat = () => {
-    // እዚህ ጋር ወደ ቻት ገጽ ይወስደዋል
-    // ዳታውን (Store Name እና Product ID) በ state እናልፋለን
-    navigate("/chat", { state: { storeName, productId } });
+    // Navigates to the chat page and passes the store name and the item data
+    navigate("/chat", { state: { storeName, item } });
   };
 
   return (
@@ -23,8 +22,10 @@ const ChatButton = ({ storeName, productId }) => {
           <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
         </div>
         <div>
-          <h4 className="font-bold text-gray-800 text-sm">ከሻጩ ጋር ይወያዩ</h4>
-          <p className="text-[11px] text-gray-500">በአማካይ በ 5 ደቂቃ ውስጥ ይመልሳሉ</p>
+          <h4 className="font-bold text-gray-800 text-sm">Chat with Seller</h4>
+          <p className="text-[11px] text-gray-500">
+            Typically replies in 5 mins
+          </p>
         </div>
       </div>
 
@@ -40,7 +41,7 @@ const ChatButton = ({ storeName, productId }) => {
 
 ChatButton.propTypes = {
   storeName: PropTypes.string,
-  productId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  item: PropTypes.object, // Passing the whole item object is better for the preview card
 };
 
 export default ChatButton;
