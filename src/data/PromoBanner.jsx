@@ -67,11 +67,7 @@ const PromoBanner = () => {
             Special Offers
           </h3>
           <p className="text-[10px] text-gray-400 font-bold">
-            {/* Option 1: Wrap in curly braces and quotes */}
             {"Don't miss out on these deals"}
-
-            {/* Option 2: Use HTML entity (alternative) */}
-            {/* Don&apos;t miss out on these deals */}
           </p>
         </div>
         <span className="text-[10px] text-pink-500 font-bold bg-pink-50 px-3 py-1 rounded-full animate-bounce">
