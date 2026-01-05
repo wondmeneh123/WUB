@@ -1,5 +1,4 @@
 const PromoBanner = () => {
-  // Enhanced data with prices
   const promoData = [
     {
       src: "https://img.freepik.com/free-photo/cosmetic-products-with-flower-petals_23-2148890413.jpg",
@@ -36,60 +35,86 @@ const PromoBanner = () => {
       oldPrice: 900,
       newPrice: 650,
     },
+    {
+      src: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=500",
+      discount: "25% OFF",
+      title: "Body Lotion",
+      oldPrice: 700,
+      newPrice: 525,
+    },
+    {
+      src: "https://images.unsplash.com/photo-1590439474822-b4b60b9480bc?auto=format&fit=crop&q=80&w=500",
+      discount: "NEW",
+      title: "Eye Care",
+      oldPrice: 1100,
+      newPrice: 880,
+    },
+    {
+      src: "https://images.unsplash.com/photo-1598440494883-7c9b2d867761?auto=format&fit=crop&q=80&w=500",
+      discount: "LIMITED",
+      title: "Face Masks",
+      oldPrice: 450,
+      newPrice: 315,
+    },
   ];
 
   return (
     <div className="mt-6 mb-10">
-      {/* Section Header */}
+      {/* Promo Header Section */}
       <div className="px-4 mb-4 flex justify-between items-center">
         <div>
           <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest">
             Special Offers
           </h3>
           <p className="text-[10px] text-gray-400 font-bold">
-            Limited time deals
+            {/* Option 1: Wrap in curly braces and quotes */}
+            {"Don't miss out on these deals"}
+
+            {/* Option 2: Use HTML entity (alternative) */}
+            {/* Don&apos;t miss out on these deals */}
           </p>
         </div>
-        <span className="text-[10px] text-pink-500 font-bold bg-pink-50 px-2 py-1 rounded-full animate-pulse">
+        <span className="text-[10px] text-pink-500 font-bold bg-pink-50 px-3 py-1 rounded-full animate-bounce">
           Swipe {">>"}
         </span>
       </div>
 
-      {/* Horizontal Scroll Container */}
+      {/* Horizontal Scrolling Promo List */}
       <div className="flex overflow-x-auto gap-4 px-4 no-scrollbar pb-4">
         {promoData.map((promo, index) => (
           <div
             key={index}
             className="relative flex-shrink-0 w-36 h-48 overflow-hidden rounded-[28px] shadow-md border border-pink-50 group"
           >
-            {/* Background Image */}
+            {/* Promo Product Image */}
             <img
               src={promo.src}
               alt={promo.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
 
-            {/* Gradient Overlay for text protection */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+            {/* Dark Gradient Overlay for Better Visibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
 
-            {/* Discount Badge (Top Right) */}
-            <div className="absolute top-3 right-3 bg-pink-600 text-white text-[9px] font-black px-2 py-1 rounded-lg shadow-lg">
+            {/* Floating Discount Badge */}
+            <div className="absolute top-3 right-3 bg-[#d43790] text-white text-[9px] font-black px-2 py-1 rounded-lg shadow-lg">
               {promo.discount}
             </div>
 
-            {/* Price & Info Content (Bottom) */}
+            {/* Product Details Section */}
             <div className="absolute inset-0 flex flex-col justify-end p-4">
               <span className="text-[10px] font-bold text-pink-300 uppercase tracking-tighter">
                 {promo.title}
               </span>
 
               <div className="flex items-baseline gap-2 mt-1">
-                {/* New Price */}
+                {/* Current Discounted Price */}
                 <p className="text-white text-sm font-black">
-                  {promo.newPrice} <span className="text-[10px]">ETB</span>
+                  {promo.newPrice} <span className="text-[8px]">ETB</span>
                 </p>
-                {/* Old Price (Strikethrough) */}
-                <p className="text-gray-400 text-[10px] line-through font-bold">
+
+                {/* Original Price with Strikethrough - AliExpress Style */}
+                <p className="text-gray-400 text-[10px] line-through decoration-pink-600 decoration-[1.5px] font-bold opacity-80">
                   {promo.oldPrice}
                 </p>
               </div>
