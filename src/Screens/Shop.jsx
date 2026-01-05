@@ -18,19 +18,19 @@ const Shop = () => {
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // 1. ADDED: location to filters state
+  const navigate = useNavigate();
+
+  // 1. FILTERS STATE
   const [filters, setFilters] = useState({
     sort: "latest",
     minPrice: 0,
     maxPrice: Infinity,
     brands: [],
     categories: [],
-    location: "", // New field
+    location: "",
   });
-
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -40,6 +40,7 @@ const Shop = () => {
           id: doc.id,
           ...doc.data(),
         }));
+        // Merge sample data with Firebase data
         setItems([...sampleItems, ...firebaseItems]);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -55,19 +56,15 @@ const Shop = () => {
     );
   };
 
-  const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
-  };
-
-  // Main filtering and sorting logic
+  // 2. FILTERING LOGIC
   const filteredItems = items
     .filter((item) => {
-      // 1. Search Query Filter
+      // Search Filter
       const matchesSearch = searchQuery
         ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
         : true;
 
-      // 2. Category Filter
+      // Category Filter (Prioritize Drawer selection, then top category list)
       const drawerCats = filters.categories;
       const matchesCategory =
         drawerCats.length > 0
@@ -76,17 +73,17 @@ const Shop = () => {
           ? item.category === selectedCategory
           : true;
 
-      // 3. Price Filter
+      // Price Filter
       const matchesPrice =
         item.price >= filters.minPrice && item.price <= filters.maxPrice;
 
-      // 4. Brand Filter
+      // Brand Filter
       const matchesBrand =
         filters.brands.length > 0 ? filters.brands.includes(item.brand) : true;
 
-      // 5. ADDED: Location Filter Logic
+      // Location Filter
       const matchesLocation = filters.location
-        ? item.city === filters.location // Firebase data must have 'city' field
+        ? item.city === filters.location
         : true;
 
       return (
@@ -113,11 +110,13 @@ const Shop = () => {
           onFilterClick={() => setIsFilterOpen(true)}
         />
 
+        {/* 3. UPDATED: Passing 'items' as 'allProducts' for dynamic counts */}
         {isFilterOpen && (
           <FilterDrawer
             setIsFilterOpen={setIsFilterOpen}
             currentFilters={filters}
-            onApplyFilters={handleApplyFilters}
+            onApplyFilters={setFilters}
+            allProducts={items}
           />
         )}
 
@@ -158,7 +157,6 @@ const Shop = () => {
                       <p className="font-bold text-[13px] text-gray-800 truncate">
                         {item.name}
                       </p>
-                      {/* Optional: Show city on card like Jiji */}
                       <p className="text-[10px] text-gray-400 font-bold uppercase truncate">
                         {item.city || "Addis Ababa"}
                       </p>
