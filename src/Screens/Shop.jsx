@@ -1,132 +1,170 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../fb";
-import { MdFace4, MdAutoFixNormal } from "react-icons/md";
-import { TbPerfume } from "react-icons/tb";
-import { PiHairDryerThin } from "react-icons/pi";
-import { BiSearch } from "react-icons/bi";
-import { FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import Carousel from "../componenets/Courasel";
 
+// Components
+import Carousel from "../componenets/Courasel";
+import SearchBar from "../componenets/SearchBar";
+import CategoryList from "../componenets/CategoryList";
+
+// Data & Icons
+import { MdSort, MdClose } from "react-icons/md";
+import { categoryData } from "../data/categories";
 const Shop = () => {
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("latest");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const navigate = useNavigate();
 
+  // Fetch data from Firebase
   useEffect(() => {
     const fetchItems = async () => {
-      const querySnapshot = await getDocs(collection(db, "products"));
-      const itemsList = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setItems(itemsList);
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const itemsList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setItems(itemsList);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
     };
-
     fetchItems();
   }, []);
 
-  const categories = [
-    { name: "Perfume", icon: <TbPerfume size={24} /> },
-    { name: "Lotion", icon: <i className="fi fi-ss-react text-2xl"></i> },
-    { name: "Facial", icon: <MdFace4 size={24} /> },
-    { name: "Treatment", icon: <MdAutoFixNormal size={24} /> },
-    { name: "Hair", icon: <PiHairDryerThin size={24} /> },
-  ];
-
-  const filteredItems = items.filter((item) => {
-    const matchesCategory = selectedCategory
-      ? item.category === selectedCategory
-      : true;
-    const matchesSearch = searchQuery
-      ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
-      : true;
-    return matchesCategory && matchesSearch;
-  });
-
-  const showItemDetail = (item) => {
-    navigate(`/item/${item.id}`, { state: { item, allItems: items } });
+  // Category selection handler
+  const handleCategoryClick = (categoryName) => {
+    setSelectedCategory(
+      categoryName === selectedCategory ? null : categoryName
+    );
   };
 
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category === selectedCategory ? null : category);
-  };
+  // Combined Filter and Sorting Logic
+  const filteredItems = items
+    .filter((item) => {
+      const matchesCategory = selectedCategory
+        ? item.category === selectedCategory
+        : true;
+      const matchesSearch = searchQuery
+        ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      return matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (sortOption === "priceLow") return a.price - b.price;
+      if (sortOption === "priceHigh") return b.price - a.price;
+      if (sortOption === "nameAZ") return a.name.localeCompare(b.name);
+      return 0;
+    });
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="mt-1 overflow-y-auto flex-1">
-        <div className="flex items-center justify-between gap-3 px-5 my-6">
-          <div className="flex bg-white items-center w-full p-2 rounded-2xl">
-            <BiSearch size={20} />
-            <input
-              type="text"
-              className="ml-2 w-full focus:border-transparent focus:outline-none"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="p-3 rounded-full active:border-0 active:border-white bg-[#d43790] text-white">
-            <FiFilter size={20} />
-          </div>
-        </div>
+    <div className="h-screen flex flex-col bg-[#FFF5F7] relative">
+      <div className="mt-1 overflow-y-auto flex-1 no-scrollbar">
+        {/* Search Bar & Filter Toggle */}
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          onFilterClick={() => setIsFilterOpen(true)}
+        />
 
-        <div className="px-4">
-          <Carousel />
-        </div>
-
-        <div className="flex overflow-x-scroll gap-2 px-4 text-sm my-2 justify-around no-scrollbar">
-          {categories.map((cate) => (
-            <div
-              key={cate.name}
-              className={`px-2 py-1 rounded-xl flex flex-col justify-center items-center cursor-pointer transition-all ${
-                selectedCategory === cate.name
-                  ? "bg-purple-500 text-white scale-105 shadow-lg"
-                  : "bg-white text-gray-700"
-              }`}
-              onClick={() => handleCategoryClick(cate.name)}
-            >
-              <div className="text-2xl">{cate.icon}</div>
-              <p>{cate.name}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col overflow-y-scroll pb-5">
-          <div className="px-4 text-xl font-semibold columns-2 gap-4 mb-16">
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white p-4 rounded-xl mb-4 cursor-pointer break-inside-avoid"
-                onClick={() => showItemDetail(item)}
-              >
-                <img
-                  width={200}
-                  src={
-                    item.image
-                      ? item.image
-                      : "https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg"
-                  }
-                  height={200}
-                  alt={item.name || "Product"}
-                  className="w-full w rounded-2xl cursor-pointer"
-                />
-                <div className="mt-2">
-                  <p className="font-bold tracking-normal truncate text-sm">
-                    {item.name}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {item.description}
-                  </p>
-                  <p className="text-lg font-semibold text-[#d43790]">
-                    ETB {item.price}
-                  </p>
-                </div>
+        {/* Sorting Bottom Sheet (Modal) */}
+        {isFilterOpen && (
+          <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm transition-all">
+            <div className="bg-white w-full rounded-t-[30px] p-6 shadow-2xl animate-in slide-in-from-bottom duration-300">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-800">
+                  Sort Products
+                </h3>
+                <button
+                  onClick={() => setIsFilterOpen(false)}
+                  className="p-2 bg-gray-100 rounded-full"
+                >
+                  <MdClose size={20} />
+                </button>
               </div>
-            ))}
+
+              <div className="space-y-3 pb-10">
+                {[
+                  { id: "latest", label: "Default (Latest)", icon: <MdSort /> },
+                  { id: "priceLow", label: "Price: Low to High", icon: "💸" },
+                  { id: "priceHigh", label: "Price: High to Low", icon: "💰" },
+                  { id: "nameAZ", label: "Name: A to Z", icon: "🔤" },
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => {
+                      setSortOption(option.id);
+                      setIsFilterOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${
+                      sortOption === option.id
+                        ? "bg-[#d43790] text-white"
+                        : "bg-gray-50 text-gray-700 hover:bg-pink-50"
+                    }`}
+                  >
+                    <span className="text-xl">{option.icon}</span>
+                    <span className="font-medium">{option.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
+        )}
+
+        {/* Show Carousel and Categories only when NOT searching */}
+        {!searchQuery && (
+          <>
+            <div className="px-4">
+              <Carousel />
+            </div>
+
+            <CategoryList
+              categories={categoryData}
+              selectedCategory={selectedCategory}
+              handleCategoryClick={handleCategoryClick}
+            />
+          </>
+        )}
+
+        {/* Product Grid Section */}
+        <div className="flex flex-col pb-20">
+          {filteredItems.length > 0 ? (
+            <div className="px-4 mt-6 columns-2 gap-4">
+              {filteredItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white p-3 rounded-[24px] mb-4 border border-pink-50 shadow-sm active:scale-95 transition-all break-inside-avoid"
+                  onClick={() =>
+                    navigate(`/item/${item.id}`, { state: { item } })
+                  }
+                >
+                  <img
+                    src={item.image || "https://via.placeholder.com/200"}
+                    className="w-full rounded-[20px] aspect-square object-cover"
+                    alt={item.name}
+                  />
+                  <div className="mt-3 px-1">
+                    <p className="font-bold text-[13px] text-gray-800 truncate">
+                      {item.name}
+                    </p>
+                    <p className="text-[#d43790] font-black mt-1">
+                      ETB {item.price}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* Empty State */
+            <div className="text-center py-20 text-gray-400">
+              <p className="italic">No products found for this criteria.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
