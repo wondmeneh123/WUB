@@ -17,8 +17,8 @@ const CategoryList = ({
           <div
             className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-sm border transition-all duration-300 ${
               selectedCategory === cate.name
-                ? "bg-black text-white border-black scale-110"
-                : "bg-white text-gray-600 border-gray-100"
+                ? "bg-[#d43790] text-white border-[#d43790] scale-110"
+                : "bg-white text-gray-600 border-pink-50" //  border-pink-50
             }`}
           >
             {cate.icon}
@@ -28,7 +28,7 @@ const CategoryList = ({
           <p
             className={`text-[11px] mt-2 font-medium text-center transition-colors ${
               selectedCategory === cate.name
-                ? "text-black font-bold"
+                ? "text-[#d43790] font-bold"
                 : "text-gray-500"
             }`}
           >
@@ -40,7 +40,6 @@ const CategoryList = ({
   );
 };
 
-// Props Validation
 CategoryList.propTypes = {
   categories: PropTypes.arrayOf(
     PropTypes.shape({
