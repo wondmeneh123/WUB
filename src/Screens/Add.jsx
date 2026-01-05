@@ -5,6 +5,7 @@ import {
   MdHome,
   MdAddCircle,
   MdPerson,
+  MdBusiness, // Now being used below
 } from "react-icons/md";
 import { FiShoppingCart } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -14,7 +15,6 @@ const Add = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Custom hook to manage product form logic and state
   const {
     item,
     preview,
@@ -24,15 +24,19 @@ const Add = () => {
     handleSubmit,
   } = useProductForm();
 
-  // Helper function to identify the current active navigation link
   const isActive = (path) => location.pathname === path;
 
+  const locations = [
+    "Addis Ababa",
+    "Bishoftu",
+    "Adama",
+    "Hawassa",
+    "Bahir Dar",
+  ];
+
   return (
-    // Main wrapper with white background and padding for bottom nav
     <div className="min-h-screen bg-white pb-24 font-sans">
-      {/* 1. Page Content Section */}
       <div className="pt-8 px-4 max-w-2xl mx-auto">
-        {/* Header with Back Button and Page Title */}
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate(-1)}
@@ -46,7 +50,6 @@ const Add = () => {
           </h1>
         </div>
 
-        {/* 2. Product Form Container */}
         <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Field: Product Name */}
@@ -60,7 +63,7 @@ const Add = () => {
                 value={item.name}
                 onChange={handleChange}
                 className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none"
-                placeholder="Enter product name"
+                placeholder="What are you selling?"
                 required
               />
             </div>
@@ -75,28 +78,52 @@ const Add = () => {
                 value={item.description}
                 onChange={handleChange}
                 className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none min-h-[120px]"
-                placeholder="Describe your product details..."
+                placeholder="Details about your product..."
                 required
               ></textarea>
             </div>
 
-            {/* Grid Layout for Price and Category */}
+            {/* Grid: Price and Brand */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
-                  Price (Br)
+                  Price (ETB)
                 </label>
                 <input
                   type="number"
                   name="price"
                   value={item.price}
                   onChange={handleChange}
-                  className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all"
+                  className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none"
                   placeholder="0.00"
                   required
                 />
               </div>
 
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
+                  Brand
+                </label>
+                <div className="relative">
+                  <MdBusiness
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-500"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    name="brand"
+                    value={item.brand}
+                    onChange={handleChange}
+                    className="w-full p-4 pl-12 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none"
+                    placeholder="e.g. Gucci"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Grid: Category and City */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
                   Category
@@ -105,23 +132,48 @@ const Add = () => {
                   name="category"
                   value={item.category}
                   onChange={handleChange}
-                  className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none"
+                  className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none appearance-none"
                   required
                 >
                   <option value="" disabled>
-                    Select Category
+                    Select
                   </option>
                   <option value="Perfume">Perfume</option>
-                  <option value="Lotion">Lotion</option>
+                  <option value="Facial">Facial</option>
+                  <option value="Makeup">Makeup</option>
+                  <option value="Hair Care">Hair Care</option>
+                  <option value="Body Care">Body Care</option>
                   <option value="Others">Others</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
+                  City
+                </label>
+                <select
+                  name="city"
+                  value={item.city}
+                  onChange={handleChange}
+                  className="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none appearance-none"
+                  required
+                >
+                  <option value="" disabled>
+                    Select City
+                  </option>
+                  {locations.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
-            {/* Field: Shop Location with Icon */}
+            {/* Field: Specific Address */}
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
-                Shop Location
+                Specific Address
               </label>
               <div className="relative">
                 <MdLocationOn
@@ -133,14 +185,14 @@ const Add = () => {
                   name="address"
                   value={item.address}
                   onChange={handleChange}
-                  className="w-full p-4 pl-12 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all"
-                  placeholder="e.g. Bole, Addis Ababa"
+                  className="w-full p-4 pl-12 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-pink-300 transition-all outline-none"
+                  placeholder="e.g. Bole Atlas"
                   required
                 />
               </div>
             </div>
 
-            {/* Section: Image Upload with Drag & Drop Area */}
+            {/* Section: Image Upload Area */}
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2 px-1">
                 Product Images
@@ -163,7 +215,6 @@ const Add = () => {
                 </p>
               </div>
 
-              {/* Horizontal Scroll for Image Previews */}
               {preview.length > 0 && (
                 <div className="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                   {preview.map((imgSrc, index) => (
@@ -178,7 +229,6 @@ const Add = () => {
               )}
             </div>
 
-            {/* Action: Form Submit Button */}
             <div className="pt-4">
               <button
                 type="submit"
@@ -196,7 +246,7 @@ const Add = () => {
         </div>
       </div>
 
-      {/* 3. Global Bottom Navigation Bar */}
+      {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-gray-100 py-3 px-8 flex items-center justify-between z-50">
         <button
           onClick={() => navigate("/")}
@@ -219,15 +269,13 @@ const Add = () => {
           onClick={() => navigate("/cart")}
           className="flex flex-col items-center gap-1 relative"
         >
-          <div className="relative">
-            <FiShoppingCart
-              size={24}
-              className={isActive("/cart") ? "text-[#E91E63]" : "text-gray-400"}
-            />
-            <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center border-2 border-white font-bold">
-              1
-            </span>
-          </div>
+          <FiShoppingCart
+            size={24}
+            className={isActive("/cart") ? "text-[#E91E63]" : "text-gray-400"}
+          />
+          <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center border-2 border-white font-bold">
+            1
+          </span>
           <span
             className={`text-[10px] font-bold ${
               isActive("/cart") ? "text-[#E91E63]" : "text-gray-400"
