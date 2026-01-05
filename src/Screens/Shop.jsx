@@ -69,7 +69,6 @@ const Shop = () => {
           onFilterClick={() => setIsFilterOpen(true)}
         />
 
-        {/* Sorting Modal Component */}
         {isFilterOpen && (
           <SortModal
             sortOption={sortOption}
@@ -83,6 +82,15 @@ const Shop = () => {
             <div className="px-4">
               <Carousel />
             </div>
+            {/* (Promo Banner)*/}
+            <div className="px-4 mt-4">
+              <img
+                src="https://img.freepik.com/free-vector/flat-beauty-sale-banner-template-with-photo_23-2149504494.jpg"
+                alt="Promo"
+                className="w-full h-32 object-cover rounded-[20px] shadow-sm border border-pink-100"
+              />
+            </div>
+
             <CategoryList
               categories={categoryData}
               selectedCategory={selectedCategory}
@@ -119,8 +127,16 @@ const Shop = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 text-gray-400 italic">
-              No products found for this criteria.
+            /*  (Empty State Image) */
+            <div className="flex flex-col items-center justify-center py-20 px-10 text-center">
+              <img
+                src="https://cdni.iconscout.com/illustration/premium/thumb/not-found-illustration-download-in-svg-png-gif-file-formats--search-error-404-empty-state-pack-user-interface-illustrations-5218628.png"
+                alt="Not Found"
+                className="w-48 h-48 object-contain mb-4 opacity-80"
+              />
+              <p className="text-gray-400 italic font-medium">
+                Oops! No products found for this criteria.
+              </p>
             </div>
           )}
         </div>
