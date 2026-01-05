@@ -1,72 +1,116 @@
 import { useNavigate } from "react-router-dom";
+import { MdLocationOn } from "react-icons/md"; // Added location icon
 
 const PromoBanner = () => {
   const navigate = useNavigate();
 
+  // 1. FULL DATA LIST (8 Items) - Structured to match Shop.jsx
+  // Images changed to high-quality Unsplash links for better compatibility
   const promoData = [
     {
-      id: "p1", // ID ተጨምሯል ለ navigation
-      src: "https://img.freepik.com/free-photo/cosmetic-products-with-flower-petals_23-2148890413.jpg",
+      id: "p1",
+      name: "Skincare Essential Kit",
+      image:
+        "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=500&auto=format&fit=crop",
       discount: "20% OFF",
-      title: "Skincare",
+      category: "Skincare",
+      brand: "CeraVe",
+      city: "Addis Ababa",
+      price: 960,
       oldPrice: 1200,
-      newPrice: 960,
+      description:
+        "Premium skincare set for daily routine. Includes cleanser and moisturizer.",
     },
     {
       id: "p2",
-      src: "https://img.freepik.com/free-photo/top-view-cosmetic-bottles-with-flowers_23-2148511794.jpg",
+      name: "Organic Beauty Oils",
+      image:
+        "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?q=80&w=500&auto=format&fit=crop",
       discount: "15% OFF",
-      title: "Organic",
+      category: "Organic",
+      brand: "The Ordinary",
+      city: "Bishoftu",
+      price: 720,
       oldPrice: 850,
-      newPrice: 720,
+      description: "100% natural organic oils for glowing and healthy skin.",
     },
     {
       id: "p3",
-      src: "https://img.freepik.com/free-photo/flat-lay-beauty-products-arrangement_23-2148443026.jpg",
+      name: "Professional Makeup Set",
+      image:
+        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=500&auto=format&fit=crop",
       discount: "HOT DEAL",
-      title: "Makeup",
+      category: "Makeup",
+      brand: "MAC",
+      city: "Addis Ababa",
+      price: 350,
       oldPrice: 500,
-      newPrice: 350,
+      description: "Long-lasting professional makeup collection for experts.",
     },
     {
       id: "p4",
-      src: "https://images.unsplash.com/photo-1596462502278-27bfad450526?auto=format&fit=crop&q=80&w=500",
+      name: "Hair Repair Serum",
+      image:
+        "https://images.unsplash.com/photo-1527799822344-429dfa855dd7?q=80&w=500&auto=format&fit=crop",
       discount: "30% OFF",
-      title: "Hair Care",
+      category: "Hair Care",
+      brand: "Gucci",
+      city: "Adama",
+      price: 1050,
       oldPrice: 1500,
-      newPrice: 1050,
+      description: "Deeply repairs damaged hair and adds natural shine.",
     },
     {
       id: "p5",
-      src: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&q=80&w=500",
+      name: "Night Recovery Cream",
+      image:
+        "https://images.unsplash.com/photo-1594465919760-441fe5908ab0?q=80&w=500&auto=format&fit=crop",
       discount: "SALE",
-      title: "Serums",
+      category: "Facial",
+      brand: "Neutrogena",
+      city: "Hawassa",
+      price: 650,
       oldPrice: 900,
-      newPrice: 650,
+      description: "Overnight recovery cream for refreshed morning skin.",
     },
     {
       id: "p6",
-      src: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=500",
+      name: "Scented Body Lotion",
+      image:
+        "https://images.unsplash.com/photo-1552046122-03184de85e08?q=80&w=500&auto=format&fit=crop",
       discount: "25% OFF",
-      title: "Body Lotion",
+      category: "Body Care",
+      brand: "OPI",
+      city: "Bahir Dar",
+      price: 525,
       oldPrice: 700,
-      newPrice: 525,
+      description: "Smooth and scented body lotion for 24h hydration.",
     },
     {
       id: "p7",
-      src: "https://images.unsplash.com/photo-1590439474822-b4b60b9480bc?auto=format&fit=crop&q=80&w=500",
+      name: "Eye Glow Serum",
+      image:
+        "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=500&auto=format&fit=crop",
       discount: "NEW",
-      title: "Eye Care",
+      category: "Eye Care",
+      brand: "CeraVe",
+      city: "Addis Ababa",
+      price: 880,
       oldPrice: 1100,
-      newPrice: 880,
+      description: "Reduces dark circles and brightens the eye area.",
     },
     {
       id: "p8",
-      src: "https://images.unsplash.com/photo-1598440494883-7c9b2d867761?auto=format&fit=crop&q=80&w=500",
+      name: "Hydrating Face Mask",
+      image:
+        "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?q=80&w=500&auto=format&fit=crop",
       discount: "LIMITED",
-      title: "Face Masks",
+      category: "Facial",
+      brand: "The Ordinary",
+      city: "Bole, AA",
+      price: 315,
       oldPrice: 450,
-      newPrice: 315,
+      description: "Deep hydration mask for dry and sensitive skin.",
     },
   ];
 
@@ -89,10 +133,10 @@ const PromoBanner = () => {
 
       {/* Horizontal Scrolling Promo List */}
       <div className="flex overflow-x-auto gap-4 px-4 no-scrollbar pb-4">
-        {promoData.map((promo, index) => (
+        {promoData.map((promo) => (
           <div
-            key={index}
-            // 1. ADDED: onClick for navigation
+            key={promo.id}
+            // Navigate and pass full item object for Details page to use
             onClick={() =>
               navigate(`/item/${promo.id}`, { state: { item: promo } })
             }
@@ -100,12 +144,12 @@ const PromoBanner = () => {
           >
             {/* Promo Product Image */}
             <img
-              src={promo.src}
-              alt={promo.title}
+              src={promo.image}
+              alt={promo.name}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
 
-            {/* Dark Gradient Overlay */}
+            {/* Dark Gradient Overlay for readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
 
             {/* Floating Discount Badge */}
@@ -115,13 +159,23 @@ const PromoBanner = () => {
 
             {/* Product Details Section */}
             <div className="absolute inset-0 flex flex-col justify-end p-4">
-              <span className="text-[10px] font-bold text-pink-300 uppercase tracking-tighter">
-                {promo.title}
+              {/* Brand & Category */}
+              <span className="text-[9px] font-bold text-pink-300 uppercase tracking-tighter">
+                {promo.category} • {promo.brand}
               </span>
 
-              <div className="flex items-baseline gap-2 mt-1">
+              {/* City/Location info */}
+              <div className="flex items-center gap-0.5 text-gray-300 mb-1">
+                <MdLocationOn size={8} />
+                <span className="text-[8px] font-medium truncate">
+                  {promo.city}
+                </span>
+              </div>
+
+              {/* Price Row */}
+              <div className="flex items-baseline gap-2">
                 <p className="text-white text-sm font-black">
-                  {promo.newPrice} <span className="text-[8px]">ETB</span>
+                  {promo.price} <span className="text-[8px]">ETB</span>
                 </p>
                 <p className="text-gray-400 text-[10px] line-through decoration-pink-600 decoration-[1.5px] font-bold opacity-80">
                   {promo.oldPrice}
