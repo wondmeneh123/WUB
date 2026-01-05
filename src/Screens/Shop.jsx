@@ -18,28 +18,30 @@ const Shop = () => {
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption] = useState("latest");
 
-  // State for Filter Drawer visibility (SortModal state removed)
+  // Advanced filters state to connect with FilterDrawer
+  const [filters, setFilters] = useState({
+    sort: "latest",
+    minPrice: 0,
+    maxPrice: Infinity,
+    brands: [],
+    categories: [],
+  });
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        // Fetching live products from Firebase Firestore
         const querySnapshot = await getDocs(collection(db, "products"));
         const firebaseItems = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
-        // Combine local sample data with live Firebase data
         setItems([...sampleItems, ...firebaseItems]);
       } catch (error) {
         console.error("Error fetching products:", error);
-        // Fallback to sample items if Firebase connection fails
         setItems(sampleItems);
       }
     };
@@ -47,45 +49,69 @@ const Shop = () => {
   }, []);
 
   const handleCategoryClick = (categoryName) => {
-    // Toggle category selection (Select or Deselect)
     setSelectedCategory(
       categoryName === selectedCategory ? null : categoryName
     );
   };
 
-  // Main filtering logic: Matches both Category and Search Query
+  // Function to update filters from the FilterDrawer
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  // Main filtering and sorting logic
   const filteredItems = items
     .filter((item) => {
-      const matchesCategory = selectedCategory
-        ? item.category === selectedCategory
-        : true;
+      // 1. Search Query Filter
       const matchesSearch = searchQuery
         ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
         : true;
-      return matchesCategory && matchesSearch;
+
+      // 2. Category Filter (From Top List or Drawer)
+      const drawerCats = filters.categories;
+      const matchesCategory =
+        drawerCats.length > 0
+          ? drawerCats.includes(item.category)
+          : selectedCategory
+          ? item.category === selectedCategory
+          : true;
+
+      // 3. Price Filter
+      const matchesPrice =
+        item.price >= filters.minPrice && item.price <= filters.maxPrice;
+
+      // 4. Brand Filter
+      const matchesBrand =
+        filters.brands.length > 0 ? filters.brands.includes(item.brand) : true;
+
+      return matchesSearch && matchesCategory && matchesPrice && matchesBrand;
     })
     .sort((a, b) => {
-      // Sorting functionality based on price and name
-      if (sortOption === "priceLow") return a.price - b.price;
-      if (sortOption === "priceHigh") return b.price - a.price;
-      if (sortOption === "nameAZ") return a.name.localeCompare(b.name);
-      return 0; // Default sorting
+      // Sorting based on the drawer selection
+      if (filters.sort === "priceLow") return a.price - b.price;
+      if (filters.sort === "priceHigh") return b.price - a.price;
+      if (filters.sort === "nameAZ") return a.name.localeCompare(b.name);
+      return 0; // Default: Latest
     });
 
   return (
     <div className="h-screen flex flex-col bg-[#FFF5F7] relative">
       <div className="mt-1 overflow-y-auto flex-1 no-scrollbar">
-        {/* Top Navigation: Search bar and Filter toggle button */}
         <SearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onFilterClick={() => setIsFilterOpen(true)}
         />
 
-        {/* Jiji-Style Advanced Filter Drawer (Includes Sort & Category filters) */}
-        {isFilterOpen && <FilterDrawer setIsFilterOpen={setIsFilterOpen} />}
+        {/* Updated FilterDrawer with props for state and logic */}
+        {isFilterOpen && (
+          <FilterDrawer
+            setIsFilterOpen={setIsFilterOpen}
+            currentFilters={filters}
+            onApplyFilters={handleApplyFilters}
+          />
+        )}
 
-        {/* Home View Components: Only visible when the user is not searching */}
         {!searchQuery && (
           <>
             <div className="px-4">
@@ -100,11 +126,9 @@ const Shop = () => {
           </>
         )}
 
-        {/* Product Display Section */}
         <div className="flex flex-col pb-10">
           {filteredItems.length > 0 ? (
             <>
-              {/* Product Grid: Uses CSS columns for a staggered/masonry effect */}
               <div className="px-4 mt-6 columns-2 gap-4">
                 {filteredItems.map((item) => (
                   <div
@@ -131,11 +155,9 @@ const Shop = () => {
                 ))}
               </div>
 
-              {/* Promotional Section: Located at the bottom of the scroll */}
               {!searchQuery && <PromoBanner />}
             </>
           ) : (
-            /* Empty State: Feedback when no products match the search or filter */
             <div className="flex flex-col items-center justify-center py-20 px-10 text-center">
               <img
                 src="https://cdni.iconscout.com/illustration/premium/thumb/not-found-illustration-download-in-svg-png-gif-file-formats--search-error-404-empty-state-pack-user-interface-illustrations-5218628.png"

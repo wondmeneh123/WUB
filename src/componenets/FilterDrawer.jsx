@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
-import { MdClose, MdRestartAlt } from "react-icons/md";
+import { useState } from "react";
+import { MdClose, MdRestartAlt, MdCheck } from "react-icons/md";
 
-const FilterDrawer = ({ setIsFilterOpen }) => {
-  // Data arrays for filter options
+const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
+  // 1. DATA ARRAYS
   const brands = [
     "Gucci",
     "CeraVe",
@@ -12,29 +13,71 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
     "OPI",
   ];
   const categories = ["Perfume", "Facial", "Makeup", "Hair Care", "Body Care"];
+  const sortOptions = [
+    { id: "latest", label: "Latest" },
+    { id: "priceLow", label: "Price: Low to High" },
+    { id: "priceHigh", label: "Price: High to Low" },
+    { id: "nameAZ", label: "Name: A to Z" },
+  ];
+
+  // 2. LOCAL STATE: Sync with current filters or set defaults
+  const [tempSort, setTempSort] = useState(currentFilters?.sort || "latest");
+  const [minPrice, setMinPrice] = useState(currentFilters?.minPrice || "");
+  const [maxPrice, setMaxPrice] = useState(currentFilters?.maxPrice || "");
+  const [selectedBrands, setSelectedBrands] = useState(
+    currentFilters?.brands || []
+  );
+  const [selectedCats, setSelectedCats] = useState(
+    currentFilters?.categories || []
+  );
+
+  // Toggle Checkbox Logic
+  const toggleItem = (list, setList, item) => {
+    setList((prev) =>
+      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+    );
+  };
+
+  // Reset all fields
+  const handleReset = () => {
+    setTempSort("latest");
+    setMinPrice("");
+    setMaxPrice("");
+    setSelectedBrands([]);
+    setSelectedCats([]);
+  };
+
+  // Send data back to Shop.jsx
+  const handleApply = () => {
+    onApplyFilters({
+      sort: tempSort,
+      minPrice: parseFloat(minPrice) || 0,
+      maxPrice: parseFloat(maxPrice) || Infinity,
+      brands: selectedBrands,
+      categories: selectedCats,
+    });
+    setIsFilterOpen(false);
+  };
 
   return (
-    /* flex justify-end makes sure the content is pushed to the right */
     <div className="fixed inset-0 z-[100] flex justify-end">
-      {/* BACKDROP: Semi-transparent background 
-          Closes the drawer when clicked
-      */}
+      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
         onClick={() => setIsFilterOpen(false)}
       ></div>
 
-      {/* DRAWER CONTENT: Positioned on the right side
-          animate-in slide-in-from-right handles the motion
-      */}
       <div className="relative w-[85%] max-w-[320px] h-full bg-white shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col">
-        {/* HEADER SECTION: Title and Reset button */}
+        {/* HEADER */}
         <div className="p-5 flex justify-between items-center border-b border-gray-100">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-black text-gray-800 uppercase tracking-tighter">
-              Filter
+              Filter & Sort
             </h3>
-            <button className="text-[#d43790] text-[10px] font-bold flex items-center gap-1 bg-pink-50 px-2 py-0.5 rounded-full hover:bg-pink-100 transition-colors">
+            <button
+              onClick={handleReset}
+              className="text-[#d43790] text-[10px] font-bold flex items-center gap-1 bg-pink-50 px-2 py-0.5 rounded-full hover:bg-pink-100 transition-colors"
+            >
               <MdRestartAlt /> RESET
             </button>
           </div>
@@ -46,9 +89,31 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
           </button>
         </div>
 
-        {/* SCROLLABLE CONTENT: All filter groups go here */}
+        {/* CONTENT */}
         <div className="flex-1 overflow-y-auto p-5 space-y-8 no-scrollbar">
-          {/* 1. PRICE RANGE: Min and Max numeric inputs */}
+          {/* SORT SECTION */}
+          <section>
+            <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
+              Sort By
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {sortOptions.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setTempSort(opt.id)}
+                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                    tempSort === opt.id
+                      ? "bg-[#d43790] text-white shadow-md shadow-pink-100"
+                      : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* PRICE RANGE */}
           <section>
             <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
               Price (ETB)
@@ -56,50 +121,54 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
             <div className="grid grid-cols-2 gap-3">
               <input
                 type="number"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
                 placeholder="Min"
-                className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-pink-200 outline-none transition-all"
+                className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-pink-200 outline-none"
               />
               <input
                 type="number"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
                 placeholder="Max"
-                className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-pink-200 outline-none transition-all"
+                className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-pink-200 outline-none"
               />
             </div>
           </section>
 
-          {/* 2. BRANDS: Multi-select checkboxes */}
+          {/* BRANDS */}
           <section>
             <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
               Popular Brands
             </h4>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {brands.map((brand) => (
                 <label
                   key={brand}
                   className="flex items-center group cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleItem(selectedBrands, setSelectedBrands, brand);
+                  }}
                 >
-                  <div className="relative flex items-center">
-                    <input
-                      type="checkbox"
-                      className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-200 checked:bg-[#d43790] checked:border-[#d43790] transition-all"
-                    />
-                    {/* SVG checkmark that appears only when input is checked */}
-                    <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3.5 w-3.5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
+                  <div
+                    className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${
+                      selectedBrands.includes(brand)
+                        ? "bg-[#d43790] border-[#d43790]"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    {selectedBrands.includes(brand) && (
+                      <MdCheck className="text-white text-xs" />
+                    )}
                   </div>
-                  <span className="ml-3 text-sm font-bold text-gray-600 group-hover:text-black transition-colors">
+                  <span
+                    className={`ml-3 text-sm font-bold transition-colors ${
+                      selectedBrands.includes(brand)
+                        ? "text-black"
+                        : "text-gray-500"
+                    }`}
+                  >
                     {brand}
                   </span>
                 </label>
@@ -107,22 +176,39 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
             </div>
           </section>
 
-          {/* 3. CATEGORIES: Additional multi-select options */}
+          {/* CATEGORIES */}
           <section>
             <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
               Categories
             </h4>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {categories.map((cat) => (
                 <label
                   key={cat}
                   className="flex items-center group cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleItem(selectedCats, setSelectedCats, cat);
+                  }}
                 >
-                  <input
-                    type="checkbox"
-                    className="h-5 w-5 rounded-md border-gray-200 text-[#d43790] focus:ring-[#d43790] cursor-pointer"
-                  />
-                  <span className="ml-3 text-sm font-bold text-gray-600 group-hover:text-black transition-colors">
+                  <div
+                    className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${
+                      selectedCats.includes(cat)
+                        ? "bg-[#d43790] border-[#d43790]"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    {selectedCats.includes(cat) && (
+                      <MdCheck className="text-white text-xs" />
+                    )}
+                  </div>
+                  <span
+                    className={`ml-3 text-sm font-bold transition-colors ${
+                      selectedCats.includes(cat)
+                        ? "text-black"
+                        : "text-gray-500"
+                    }`}
+                  >
                     {cat}
                   </span>
                 </label>
@@ -131,13 +217,13 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
           </section>
         </div>
 
-        {/* FOOTER: Fixed button to apply filters */}
-        <div className="p-5 border-t border-gray-50 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+        {/* FOOTER */}
+        <div className="p-5 border-t border-gray-50 bg-white">
           <button
-            onClick={() => setIsFilterOpen(false)}
-            className="w-full bg-[#d43790] text-white font-black py-4 rounded-[20px] shadow-lg shadow-pink-100 active:scale-95 transition-all"
+            onClick={handleApply}
+            className="w-full bg-[#d43790] text-white font-black py-4 rounded-[20px] shadow-lg shadow-pink-100 active:scale-95 transition-all uppercase tracking-widest"
           >
-            SHOW RESULTS
+            Show Results
           </button>
         </div>
       </div>
@@ -145,9 +231,10 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
   );
 };
 
-// Defining PropTypes for component safety
 FilterDrawer.propTypes = {
   setIsFilterOpen: PropTypes.func.isRequired,
+  currentFilters: PropTypes.object,
+  onApplyFilters: PropTypes.func.isRequired,
 };
 
 export default FilterDrawer;
