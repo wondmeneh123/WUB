@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Carousel from "../componenets/Courasel";
 import SearchBar from "../componenets/SearchBar";
 import CategoryList from "../componenets/CategoryList";
-import SortModal from "../componenets/SortModal";
-import FilterDrawer from "../componenets/FilterDrawer"; // Imported the new Jiji-style filter
+import FilterDrawer from "../componenets/FilterDrawer";
 
 // Data
 import { categoryData } from "../data/categories";
@@ -19,10 +18,9 @@ const Shop = () => {
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState("latest");
+  const [sortOption] = useState("latest");
 
-  // State management for Modals/Drawers
-  const [isSortOpen, setIsSortOpen] = useState(false);
+  // State for Filter Drawer visibility (SortModal state removed)
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -41,7 +39,7 @@ const Shop = () => {
         setItems([...sampleItems, ...firebaseItems]);
       } catch (error) {
         console.error("Error fetching products:", error);
-        // Fallback to sample items if Firebase fails
+        // Fallback to sample items if Firebase connection fails
         setItems(sampleItems);
       }
     };
@@ -49,13 +47,13 @@ const Shop = () => {
   }, []);
 
   const handleCategoryClick = (categoryName) => {
-    // Toggle category selection
+    // Toggle category selection (Select or Deselect)
     setSelectedCategory(
       categoryName === selectedCategory ? null : categoryName
     );
   };
 
-  // Main filtering and sorting logic
+  // Main filtering logic: Matches both Category and Search Query
   const filteredItems = items
     .filter((item) => {
       const matchesCategory = selectedCategory
@@ -67,35 +65,27 @@ const Shop = () => {
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
+      // Sorting functionality based on price and name
       if (sortOption === "priceLow") return a.price - b.price;
       if (sortOption === "priceHigh") return b.price - a.price;
       if (sortOption === "nameAZ") return a.name.localeCompare(b.name);
-      return 0; // Default: Latest/No Sort
+      return 0; // Default sorting
     });
 
   return (
     <div className="h-screen flex flex-col bg-[#FFF5F7] relative">
       <div className="mt-1 overflow-y-auto flex-1 no-scrollbar">
-        {/* Search & Filter Header */}
+        {/* Top Navigation: Search bar and Filter toggle button */}
         <SearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          onFilterClick={() => setIsFilterOpen(true)} // Opens the Jiji-style Filter
+          onFilterClick={() => setIsFilterOpen(true)}
         />
 
-        {/* Sorting Sidebar/Modal */}
-        {isSortOpen && (
-          <SortModal
-            sortOption={sortOption}
-            setSortOption={setSortOption}
-            setIsFilterOpen={setIsSortOpen}
-          />
-        )}
-
-        {/* Jiji-Style Advanced Filter Drawer */}
+        {/* Jiji-Style Advanced Filter Drawer (Includes Sort & Category filters) */}
         {isFilterOpen && <FilterDrawer setIsFilterOpen={setIsFilterOpen} />}
 
-        {/* Home Top View: Carousel & Categories (Hidden during search) */}
+        {/* Home View Components: Only visible when the user is not searching */}
         {!searchQuery && (
           <>
             <div className="px-4">
@@ -110,11 +100,11 @@ const Shop = () => {
           </>
         )}
 
-        {/* Product Grid Section */}
+        {/* Product Display Section */}
         <div className="flex flex-col pb-10">
           {filteredItems.length > 0 ? (
             <>
-              {/* Layout Helper: Using CSS columns for a masonry-like look */}
+              {/* Product Grid: Uses CSS columns for a staggered/masonry effect */}
               <div className="px-4 mt-6 columns-2 gap-4">
                 {filteredItems.map((item) => (
                   <div
@@ -141,11 +131,11 @@ const Shop = () => {
                 ))}
               </div>
 
-              {/* Special Promotions Banner: Visible at the bottom of the list */}
+              {/* Promotional Section: Located at the bottom of the scroll */}
               {!searchQuery && <PromoBanner />}
             </>
           ) : (
-            /* Empty State: Shown when search/filter returns no results */
+            /* Empty State: Feedback when no products match the search or filter */
             <div className="flex flex-col items-center justify-center py-20 px-10 text-center">
               <img
                 src="https://cdni.iconscout.com/illustration/premium/thumb/not-found-illustration-download-in-svg-png-gif-file-formats--search-error-404-empty-state-pack-user-interface-illustrations-5218628.png"

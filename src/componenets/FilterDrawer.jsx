@@ -14,6 +14,7 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
   const categories = ["Perfume", "Facial", "Makeup", "Hair Care", "Body Care"];
 
   return (
+    /* flex justify-end makes sure the content is pushed to the right */
     <div className="fixed inset-0 z-[100] flex justify-end">
       {/* BACKDROP: Semi-transparent background 
           Closes the drawer when clicked
@@ -23,8 +24,8 @@ const FilterDrawer = ({ setIsFilterOpen }) => {
         onClick={() => setIsFilterOpen(false)}
       ></div>
 
-      {/* DRAWER CONTENT: Slides in from the right 
-          Width is set to 85% on mobile, max 320px
+      {/* DRAWER CONTENT: Positioned on the right side
+          animate-in slide-in-from-right handles the motion
       */}
       <div className="relative w-[85%] max-w-[320px] h-full bg-white shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col">
         {/* HEADER SECTION: Title and Reset button */}
