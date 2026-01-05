@@ -135,7 +135,9 @@ const Shop = () => {
                     key={item.id}
                     className="bg-white p-3 rounded-[24px] mb-4 border border-pink-50 shadow-sm active:scale-95 transition-all break-inside-avoid cursor-pointer"
                     onClick={() =>
-                      navigate(`/item/${item.id}`, { state: { item } })
+                      navigate(`/item/${item.id}`, {
+                        state: { item, allItems: items },
+                      })
                     }
                   >
                     <img
