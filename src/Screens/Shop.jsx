@@ -11,6 +11,8 @@ import SortModal from "../componenets/SortModal";
 
 // Data
 import { categoryData } from "../data/categories";
+import { sampleItems } from "../data/sampleProducts";
+import PromoBanner from "../data/PromoBanner";
 
 const Shop = () => {
   const [items, setItems] = useState([]);
@@ -25,13 +27,16 @@ const Shop = () => {
     const fetchItems = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "products"));
-        const itemsList = querySnapshot.docs.map((doc) => ({
+        const firebaseItems = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setItems(itemsList);
+
+        // Merge Sample products with Firebase products
+        setItems([...sampleItems, ...firebaseItems]);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setItems(sampleItems);
       }
     };
     fetchItems();
@@ -77,18 +82,11 @@ const Shop = () => {
           />
         )}
 
+        {/* Home Top View: Carousel & Categories */}
         {!searchQuery && (
           <>
             <div className="px-4">
               <Carousel />
-            </div>
-            {/* (Promo Banner)*/}
-            <div className="px-4 mt-4">
-              <img
-                src="https://img.freepik.com/free-vector/flat-beauty-sale-banner-template-with-photo_23-2149504494.jpg"
-                alt="Promo"
-                className="w-full h-32 object-cover rounded-[20px] shadow-sm border border-pink-100"
-              />
             </div>
 
             <CategoryList
@@ -99,35 +97,40 @@ const Shop = () => {
           </>
         )}
 
-        <div className="flex flex-col pb-20">
+        {/* Product Grid Section */}
+        <div className="flex flex-col pb-10">
           {filteredItems.length > 0 ? (
-            <div className="px-4 mt-6 columns-2 gap-4">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white p-3 rounded-[24px] mb-4 border border-pink-50 shadow-sm active:scale-95 transition-all break-inside-avoid"
-                  onClick={() =>
-                    navigate(`/item/${item.id}`, { state: { item } })
-                  }
-                >
-                  <img
-                    src={item.image || "https://via.placeholder.com/200"}
-                    className="w-full rounded-[20px] aspect-square object-cover"
-                    alt={item.name}
-                  />
-                  <div className="mt-3 px-1">
-                    <p className="font-bold text-[13px] text-gray-800 truncate">
-                      {item.name}
-                    </p>
-                    <p className="text-[#d43790] font-black mt-1">
-                      ETB {item.price}
-                    </p>
+            <>
+              <div className="px-4 mt-6 columns-2 gap-4">
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white p-3 rounded-[24px] mb-4 border border-pink-50 shadow-sm active:scale-95 transition-all break-inside-avoid"
+                    onClick={() =>
+                      navigate(`/item/${item.id}`, { state: { item } })
+                    }
+                  >
+                    <img
+                      src={item.image || "https://via.placeholder.com/200"}
+                      className="w-full rounded-[20px] aspect-square object-cover"
+                      alt={item.name}
+                    />
+                    <div className="mt-3 px-1">
+                      <p className="font-bold text-[13px] text-gray-800 truncate">
+                        {item.name}
+                      </p>
+                      <p className="text-[#d43790] font-black mt-1">
+                        ETB {item.price}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {/* Promo Banner moved here: Below all products */}
+              {!searchQuery && <PromoBanner />}
+            </>
           ) : (
-            /*  (Empty State Image) */
             <div className="flex flex-col items-center justify-center py-20 px-10 text-center">
               <img
                 src="https://cdni.iconscout.com/illustration/premium/thumb/not-found-illustration-download-in-svg-png-gif-file-formats--search-error-404-empty-state-pack-user-interface-illustrations-5218628.png"
