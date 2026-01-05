@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   MdClose,
   MdRestartAlt,
@@ -8,24 +8,41 @@ import {
   MdKeyboardArrowDown,
 } from "react-icons/md";
 
-const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
-  // 1. DATA WITH COUNTS (Jiji Style)
-  const brands = [
-    { name: "Gucci", count: 12 },
-    { name: "CeraVe", count: 45 },
-    { name: "MAC", count: 28 },
-    { name: "The Ordinary", count: 33 },
-    { name: "Neutrogena", count: 19 },
-    { name: "OPI", count: 14 },
-  ];
+// 1. ADDED 'allProducts' prop to calculate real counts
+const FilterDrawer = ({
+  setIsFilterOpen,
+  currentFilters,
+  onApplyFilters,
+  allProducts = [],
+}) => {
+  // 2. CALCULATE DYNAMIC COUNTS based on actual data
+  const { brands, categories } = useMemo(() => {
+    const brandMap = {};
+    const catMap = {};
 
-  const categories = [
-    { name: "Perfume", count: 120 },
-    { name: "Facial", count: 85 },
-    { name: "Makeup", count: 210 },
-    { name: "Hair Care", count: 64 },
-    { name: "Body Care", count: 92 },
-  ];
+    allProducts.forEach((prod) => {
+      // Brand count
+      if (prod.brand) {
+        brandMap[prod.brand] = (brandMap[prod.brand] || 0) + 1;
+      }
+      // Category count
+      if (prod.category) {
+        catMap[prod.category] = (catMap[prod.category] || 0) + 1;
+      }
+    });
+
+    // Convert to array format for rendering
+    return {
+      brands: Object.entries(brandMap).map(([name, count]) => ({
+        name,
+        count,
+      })),
+      categories: Object.entries(catMap).map(([name, count]) => ({
+        name,
+        count,
+      })),
+    };
+  }, [allProducts]);
 
   const locations = [
     "Addis Ababa",
@@ -42,7 +59,13 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
     { id: "nameAZ", label: "Name: A to Z" },
   ];
 
-  // 2. LOCAL STATE
+  const priceRanges = [
+    { label: "Under 500 ETB", min: 0, max: 500 },
+    { label: "500 - 1,000 ETB", min: 500, max: 1000 },
+    { label: "1,000 - 5,000 ETB", min: 1000, max: 5000 },
+    { label: "Over 5,000 ETB", min: 5000, max: 100000 },
+  ];
+
   const [tempSort, setTempSort] = useState(currentFilters?.sort || "latest");
   const [minPrice, setMinPrice] = useState(currentFilters?.minPrice || "");
   const [maxPrice, setMaxPrice] = useState(currentFilters?.maxPrice || "");
@@ -60,6 +83,16 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
     setList((prev) =>
       prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
     );
+  };
+
+  const handlePricePreset = (min, max) => {
+    if (minPrice === min && maxPrice === max) {
+      setMinPrice("");
+      setMaxPrice("");
+    } else {
+      setMinPrice(min);
+      setMaxPrice(max);
+    }
   };
 
   const handleReset = () => {
@@ -85,7 +118,6 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex justify-end">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
         onClick={() => setIsFilterOpen(false)}
@@ -115,7 +147,7 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
 
         {/* CONTENT */}
         <div className="flex-1 overflow-y-auto p-5 space-y-8 no-scrollbar pb-24">
-          {/* LOCATION SECTION (Option Style) */}
+          {/* LOCATION */}
           <section>
             <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-1">
               <MdLocationOn className="text-pink-500" /> Location
@@ -140,7 +172,7 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
             </div>
           </section>
 
-          {/* SORT SECTION (Visual Tags/Pills) */}
+          {/* SORT BY */}
           <section>
             <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">
               Sort By
@@ -167,7 +199,7 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
             <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">
               Price Range (ETB)
             </h4>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <input
                 type="number"
                 value={minPrice}
@@ -184,9 +216,39 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
                 className="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-pink-100 outline-none"
               />
             </div>
+            <div className="space-y-2 mt-4">
+              {priceRanges.map((range, index) => (
+                <div
+                  key={index}
+                  onClick={() => handlePricePreset(range.min, range.max)}
+                  className="flex items-center gap-3 cursor-pointer group"
+                >
+                  <div
+                    className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${
+                      minPrice === range.min && maxPrice === range.max
+                        ? "bg-[#d43790] border-[#d43790]"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    {minPrice === range.min && maxPrice === range.max && (
+                      <MdCheck className="text-white text-xs" />
+                    )}
+                  </div>
+                  <span
+                    className={`text-sm font-bold ${
+                      minPrice === range.min && maxPrice === range.max
+                        ? "text-gray-900"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {range.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </section>
 
-          {/* BRANDS (Visual Tags with Check) */}
+          {/* DYNAMIC BRANDS */}
           <section>
             <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">
               Popular Brands
@@ -219,7 +281,7 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
             </div>
           </section>
 
-          {/* CATEGORIES (Jiji Style List) */}
+          {/* DYNAMIC CATEGORIES */}
           <section>
             <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">
               Categories
@@ -231,11 +293,11 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
                   onClick={() =>
                     toggleItem(selectedCats, setSelectedCats, cat.name)
                   }
-                  className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors"
+                  className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`h-5 w-5 rounded border flex items-center justify-center transition-all ${
+                      className={`h-5 w-5 rounded border flex items-center justify-center ${
                         selectedCats.includes(cat.name)
                           ? "bg-[#d43790] border-[#d43790]"
                           : "border-gray-200"
@@ -268,7 +330,7 @@ const FilterDrawer = ({ setIsFilterOpen, currentFilters, onApplyFilters }) => {
         <div className="absolute bottom-0 left-0 right-0 p-5 border-t border-gray-50 bg-white/80 backdrop-blur-md">
           <button
             onClick={handleApply}
-            className="w-full bg-[#d43790] text-white font-black py-4 rounded-2xl shadow-lg shadow-pink-100 active:scale-95 transition-all uppercase tracking-widest"
+            className="w-full bg-[#d43790] text-white font-black py-4 rounded-2xl shadow-lg uppercase tracking-widest"
           >
             Show Results
           </button>
@@ -282,6 +344,7 @@ FilterDrawer.propTypes = {
   setIsFilterOpen: PropTypes.func.isRequired,
   currentFilters: PropTypes.object,
   onApplyFilters: PropTypes.func.isRequired,
+  allProducts: PropTypes.array, // Important: Pass your products array here
 };
 
 export default FilterDrawer;
