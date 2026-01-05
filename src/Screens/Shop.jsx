@@ -19,13 +19,14 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Advanced filters state to connect with FilterDrawer
+  // 1. ADDED: location to filters state
   const [filters, setFilters] = useState({
     sort: "latest",
     minPrice: 0,
     maxPrice: Infinity,
     brands: [],
     categories: [],
+    location: "", // New field
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -54,7 +55,6 @@ const Shop = () => {
     );
   };
 
-  // Function to update filters from the FilterDrawer
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
   };
@@ -67,7 +67,7 @@ const Shop = () => {
         ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
         : true;
 
-      // 2. Category Filter (From Top List or Drawer)
+      // 2. Category Filter
       const drawerCats = filters.categories;
       const matchesCategory =
         drawerCats.length > 0
@@ -84,14 +84,24 @@ const Shop = () => {
       const matchesBrand =
         filters.brands.length > 0 ? filters.brands.includes(item.brand) : true;
 
-      return matchesSearch && matchesCategory && matchesPrice && matchesBrand;
+      // 5. ADDED: Location Filter Logic
+      const matchesLocation = filters.location
+        ? item.city === filters.location // Firebase data must have 'city' field
+        : true;
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesPrice &&
+        matchesBrand &&
+        matchesLocation
+      );
     })
     .sort((a, b) => {
-      // Sorting based on the drawer selection
       if (filters.sort === "priceLow") return a.price - b.price;
       if (filters.sort === "priceHigh") return b.price - a.price;
       if (filters.sort === "nameAZ") return a.name.localeCompare(b.name);
-      return 0; // Default: Latest
+      return 0;
     });
 
   return (
@@ -103,7 +113,6 @@ const Shop = () => {
           onFilterClick={() => setIsFilterOpen(true)}
         />
 
-        {/* Updated FilterDrawer with props for state and logic */}
         {isFilterOpen && (
           <FilterDrawer
             setIsFilterOpen={setIsFilterOpen}
@@ -148,6 +157,10 @@ const Shop = () => {
                     <div className="mt-3 px-1">
                       <p className="font-bold text-[13px] text-gray-800 truncate">
                         {item.name}
+                      </p>
+                      {/* Optional: Show city on card like Jiji */}
+                      <p className="text-[10px] text-gray-400 font-bold uppercase truncate">
+                        {item.city || "Addis Ababa"}
                       </p>
                       <p className="text-[#d43790] font-black mt-1 text-sm">
                         ETB {item.price}
